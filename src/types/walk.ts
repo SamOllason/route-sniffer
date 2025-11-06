@@ -6,7 +6,7 @@ export type DifficultyLevel = 'easy' | 'moderate' | 'hard'
 
 export interface Walk {
   id: string
-  user_id: string
+  user_id: string | null
   name: string
   distance_km: number
   duration_minutes: number
