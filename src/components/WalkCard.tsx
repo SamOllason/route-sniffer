@@ -1,11 +1,22 @@
+'use client'
+
 import type { Walk } from '@/types/walk'
 import Link from 'next/link'
 
 interface WalkCardProps {
   walk: Walk
+  onDelete?: (walkId: string) => void
 }
 
-export function WalkCard({ walk }: WalkCardProps) {
+export function WalkCard({ walk, onDelete }: WalkCardProps) {
+  const handleDelete = () => {
+    if (confirm(`Are you sure you want to delete "${walk.name}"? This cannot be undone.`)) {
+      if (onDelete) {
+        onDelete(walk.id)
+      }
+    }
+  }
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
       {/* Walk Name */}
@@ -43,12 +54,15 @@ export function WalkCard({ walk }: WalkCardProps) {
         >
           Edit
         </Link>
-        <button
-          type="button"
-          className="text-sm text-red-600 hover:text-red-700 font-medium"
-        >
-          Delete
-        </button>
+        {onDelete && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="text-sm text-red-600 hover:text-red-700 font-medium"
+          >
+            Delete
+          </button>
+        )}
       </div>
     </div>
   )

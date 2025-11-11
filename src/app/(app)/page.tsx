@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { WalkCard } from '@/components/WalkCard'
 
@@ -12,6 +13,27 @@ export default async function Home() {
     .select('*')
     .eq('user_id', user?.id)
     .order('created_at', { ascending: false })
+
+  async function deleteWalkAction(walkId: string) {
+    'use server'
+
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      return
+    }
+
+    // Delete the walk (RLS ensures user can only delete their own walks)
+    await supabase
+      .from('walks')
+      .delete()
+      .eq('id', walkId)
+      .eq('user_id', user.id)
+
+    // Revalidate the home page to show updated list
+    revalidatePath('/')
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -60,7 +82,7 @@ export default async function Home() {
         {!error && walks && walks.length > 0 && (
           <div className="space-y-4">
             {walks.map((walk) => (
-              <WalkCard key={walk.id} walk={walk} />
+              <WalkCard key={walk.id} walk={walk} onDelete={deleteWalkAction} />
             ))}
           </div>
         )}

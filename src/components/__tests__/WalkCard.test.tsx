@@ -117,13 +117,19 @@ describe('WalkCard', () => {
       expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument()
     })
 
-    it('calls onDelete when delete button is clicked', async () => {
+    it('calls onDelete when delete button is clicked and confirmed', async () => {
       const user = userEvent.setup()
+      // Mock window.confirm to return true (user confirms)
+      vi.spyOn(window, 'confirm').mockReturnValue(true)
+      
       render(<WalkCard walk={mockWalk} onDelete={mockOnDelete} />)
 
       const deleteButton = screen.getByRole('button', { name: /delete/i })
       await user.click(deleteButton)
 
+      expect(window.confirm).toHaveBeenCalledWith(
+        `Are you sure you want to delete "${mockWalk.name}"? This cannot be undone.`
+      )
       expect(mockOnDelete).toHaveBeenCalledTimes(1)
       expect(mockOnDelete).toHaveBeenCalledWith(mockWalk.id)
     })
