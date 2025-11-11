@@ -1,4 +1,5 @@
 import type { Walk } from '@/types/walk'
+import Link from 'next/link'
 
 interface WalkCardProps {
   walk: Walk
@@ -33,6 +34,22 @@ export function WalkCard({ walk }: WalkCardProps) {
           {walk.notes}
         </p>
       )}
+
+      {/* Actions */}
+      <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100">
+        <Link
+          href={`/walks/${walk.id}/edit`}
+          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+        >
+          Edit
+        </Link>
+        <button
+          type="button"
+          className="text-sm text-red-600 hover:text-red-700 font-medium"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   )
 }

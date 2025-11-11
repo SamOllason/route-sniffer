@@ -92,4 +92,22 @@ describe('WalkCard', () => {
       expect(screen.getByText(/hard/i)).toBeInTheDocument()
     })
   })
+
+  describe('Edit and Delete Actions', () => {
+    it('renders an edit button', () => {
+      render(<WalkCard walk={mockWalk} />)
+      expect(screen.getByRole('link', { name: /edit/i })).toBeInTheDocument()
+    })
+
+    it('edit button links to the correct edit page', () => {
+      render(<WalkCard walk={mockWalk} />)
+      const editLink = screen.getByRole('link', { name: /edit/i })
+      expect(editLink).toHaveAttribute('href', `/walks/${mockWalk.id}/edit`)
+    })
+
+    it('renders a delete button', () => {
+      render(<WalkCard walk={mockWalk} />)
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument()
+    })
+  })
 })
