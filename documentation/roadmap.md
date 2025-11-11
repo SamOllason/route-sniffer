@@ -54,14 +54,15 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 **Employability impact:** ⭐⭐⭐⭐
 
 **Features:**
-- [ ] Edit button on each WalkCard
+- [x] Edit button on each WalkCard
+- [x] Delete button on each WalkCard
+- [x] Tests for edit/delete buttons (3 passing tests)
 - [ ] Edit walk page (form pre-populated)
 - [ ] Update Server Action
-- [ ] Delete button with confirmation dialog
+- [ ] Delete confirmation dialog
 - [ ] Delete Server Action
 - [ ] Optimistic UI updates (update UI before server responds)
 - [ ] Success/error toast notifications
-- [ ] Tests for edit/delete flows
 
 **Why this matters:**
 - CRUD is fundamental to all applications
