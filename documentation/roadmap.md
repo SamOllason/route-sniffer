@@ -73,11 +73,17 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 - [x] Comprehensive tests for filter behavior
 - [x] Multiple filters combined in URL
 
+### Phase 6: Deployment
+- [x] Created `.env.example` for environment variable documentation
+- [x] Added deployment section to README
+- [x] Prepared for Vercel deployment (zero-config Next.js detection)
+- [x] Documented deployment steps (GitHub integration recommended)
+
 ---
 
 ## 🎯 Priority Roadmap
 
-### Phase 6: File Upload (Walk Photos) 📸
+### Phase 7: File Upload (Walk Photos) 📸
 **Time estimate:** 2-3 hours  
 **Employability impact:** ⭐⭐⭐⭐
 
@@ -99,7 +105,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 7: Loading States & Error Handling 🎨
+### Phase 8: Loading States & Error Handling 🎨
 **Time estimate:** 1-2 hours  
 **Employability impact:** ⭐⭐⭐⭐
 
@@ -120,7 +126,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 8: Pagination / Infinite Scroll 📜
+### Phase 9: Pagination / Infinite Scroll 📜
 **Time estimate:** 2 hours  
 **Employability impact:** ⭐⭐⭐
 
@@ -139,7 +145,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 9: Dark Mode 🌙
+### Phase 10: Dark Mode 🌙
 **Time estimate:** 30-60 minutes  
 **Employability impact:** ⭐⭐
 
@@ -158,7 +164,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 10: Advanced Features (Polish)
+### Phase 11: Advanced Features (Polish)
 
 **Analytics Dashboard:**
 - [ ] Total distance walked
@@ -182,7 +188,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 11: Database Migration Management (Production Best Practice) 🔧
+### Phase 12: Database Migration Management (Production Best Practice) 🔧
 **Goal:** Professional database change management  
 **Time estimate:** 2-3 hours  
 **Employability impact:** ⭐⭐⭐⭐
