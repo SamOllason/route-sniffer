@@ -1,9 +1,16 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { WalkCard } from '../WalkCard'
 import type { Walk } from '@/types/walk'
 
 describe('WalkCard', () => {
+  const mockOnDelete = vi.fn()
+
+  beforeEach(() => {
+    mockOnDelete.mockClear()
+  })
+
   const mockWalk: Walk = {
     id: '123-456',
     user_id: null,
@@ -95,19 +102,41 @@ describe('WalkCard', () => {
 
   describe('Edit and Delete Actions', () => {
     it('renders an edit button', () => {
-      render(<WalkCard walk={mockWalk} />)
+      render(<WalkCard walk={mockWalk} onDelete={mockOnDelete} />)
       expect(screen.getByRole('link', { name: /edit/i })).toBeInTheDocument()
     })
 
     it('edit button links to the correct edit page', () => {
-      render(<WalkCard walk={mockWalk} />)
+      render(<WalkCard walk={mockWalk} onDelete={mockOnDelete} />)
       const editLink = screen.getByRole('link', { name: /edit/i })
       expect(editLink).toHaveAttribute('href', `/walks/${mockWalk.id}/edit`)
     })
 
     it('renders a delete button', () => {
-      render(<WalkCard walk={mockWalk} />)
+      render(<WalkCard walk={mockWalk} onDelete={mockOnDelete} />)
       expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument()
+    })
+
+    it('calls onDelete when delete button is clicked', async () => {
+      const user = userEvent.setup()
+      render(<WalkCard walk={mockWalk} onDelete={mockOnDelete} />)
+
+      const deleteButton = screen.getByRole('button', { name: /delete/i })
+      await user.click(deleteButton)
+
+      expect(mockOnDelete).toHaveBeenCalledTimes(1)
+      expect(mockOnDelete).toHaveBeenCalledWith(mockWalk.id)
+    })
+
+    it('does not call onDelete if onDelete prop is not provided', async () => {
+      const user = userEvent.setup()
+      // Render without onDelete prop
+      render(<WalkCard walk={mockWalk} />)
+
+      const deleteButton = screen.queryByRole('button', { name: /delete/i })
+      
+      // Delete button should not be rendered if no onDelete handler
+      expect(deleteButton).not.toBeInTheDocument()
     })
   })
 })

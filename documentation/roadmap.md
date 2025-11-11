@@ -57,8 +57,11 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 - [x] Edit button on each WalkCard
 - [x] Delete button on each WalkCard
 - [x] Tests for edit/delete buttons (3 passing tests)
-- [ ] Edit walk page (form pre-populated)
-- [ ] Update Server Action
+- [x] Edit walk page (form pre-populated)
+- [x] Update Server Action (with redirect fix)
+- [x] EditWalkForm component (14 passing tests)
+- [x] Form validation and error handling
+- [x] Consistent styling with AddWalkForm
 - [ ] Delete confirmation dialog
 - [ ] Delete Server Action
 - [ ] Optimistic UI updates (update UI before server responds)
