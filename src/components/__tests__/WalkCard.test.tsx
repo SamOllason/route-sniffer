@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { WalkCard } from '../WalkCard'
@@ -9,6 +9,11 @@ describe('WalkCard', () => {
 
   beforeEach(() => {
     mockOnDelete.mockClear()
+    mockOnDelete.mockResolvedValue(undefined)
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
   })
 
   const mockWalk: Walk = {
@@ -132,6 +137,22 @@ describe('WalkCard', () => {
       )
       expect(mockOnDelete).toHaveBeenCalledTimes(1)
       expect(mockOnDelete).toHaveBeenCalledWith(mockWalk.id)
+    })
+
+    it('does not call onDelete when delete is cancelled', async () => {
+      const user = userEvent.setup()
+      // Mock window.confirm to return false (user cancels)
+      vi.spyOn(window, 'confirm').mockReturnValue(false)
+      
+      render(<WalkCard walk={mockWalk} onDelete={mockOnDelete} />)
+
+      const deleteButton = screen.getByRole('button', { name: /delete/i })
+      await user.click(deleteButton)
+
+      expect(window.confirm).toHaveBeenCalledWith(
+        `Are you sure you want to delete "${mockWalk.name}"? This cannot be undone.`
+      )
+      expect(mockOnDelete).not.toHaveBeenCalled()
     })
 
     it('does not call onDelete if onDelete prop is not provided', async () => {

@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
-import { WalkCard } from '@/components/WalkCard'
+import { WalksList } from '@/components/WalksList'
+import { deleteWalkAction } from './actions'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -13,27 +13,6 @@ export default async function Home() {
     .select('*')
     .eq('user_id', user?.id)
     .order('created_at', { ascending: false })
-
-  async function deleteWalkAction(walkId: string) {
-    'use server'
-
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return
-    }
-
-    // Delete the walk (RLS ensures user can only delete their own walks)
-    await supabase
-      .from('walks')
-      .delete()
-      .eq('id', walkId)
-      .eq('user_id', user.id)
-
-    // Revalidate the home page to show updated list
-    revalidatePath('/')
-  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -59,32 +38,9 @@ export default async function Home() {
           </div>
         )}
 
-        {/* Empty State */}
-        {!error && walks && walks.length === 0 && (
-          <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-            <div className="text-6xl mb-4">🐕</div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-              No walks yet!
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Ready to explore? Add your first walk to get started.
-            </p>
-            <Link
-              href="/walks/new"
-              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Add Your First Walk
-            </Link>
-          </div>
-        )}
-
-        {/* Walks List */}
-        {!error && walks && walks.length > 0 && (
-          <div className="space-y-4">
-            {walks.map((walk) => (
-              <WalkCard key={walk.id} walk={walk} onDelete={deleteWalkAction} />
-            ))}
-          </div>
+        {/* Walks List with Optimistic Updates */}
+        {!error && walks && (
+          <WalksList initialWalks={walks} onDelete={deleteWalkAction} />
         )}
       </div>
     </div>

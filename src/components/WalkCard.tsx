@@ -1,24 +1,31 @@
 'use client'
 
+import { useState, useTransition } from 'react'
 import type { Walk } from '@/types/walk'
 import Link from 'next/link'
 
 interface WalkCardProps {
   walk: Walk
-  onDelete?: (walkId: string) => void
+  onDelete?: (walkId: string) => Promise<void> | void
 }
 
 export function WalkCard({ walk, onDelete }: WalkCardProps) {
+  const [isPending, startTransition] = useTransition()
+
   const handleDelete = () => {
     if (confirm(`Are you sure you want to delete "${walk.name}"? This cannot be undone.`)) {
       if (onDelete) {
-        onDelete(walk.id)
+        startTransition(async () => {
+          await onDelete(walk.id)
+        })
       }
     }
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+    <div className={`bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all ${
+      isPending ? 'opacity-50 pointer-events-none' : ''
+    }`}>
       {/* Walk Name */}
       <h3 className="text-xl font-semibold text-gray-900 mb-3">
         {walk.name}
