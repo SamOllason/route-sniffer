@@ -1,36 +1,146 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐕 Woof Woof Walkies
 
-## Getting Started
+A modern, full-stack web application for dog walkers to plan, log, and revisit their favorite walking routes. Built with Next.js 15, TypeScript, React, and Supabase.
 
-First, run the development server:
+## 🎯 Project Purpose
 
+This is a **learning-focused portfolio project** demonstrating modern full-stack development practices with cutting-edge technologies. The goal is to showcase professional development patterns, accessibility-first design, and test-driven development while building a practical application.
+
+## ✨ Features
+
+- 🔐 **User Authentication** - Email/password login with Supabase Auth
+- ✏️ **Full CRUD Operations** - Create, read, update, and delete walks
+- 🔍 **Advanced Filtering** - Search by name, difficulty, and distance with URL-based state
+- ⚡ **Optimistic UI Updates** - Instant feedback with automatic rollback on errors
+- 📱 **Responsive Design** - Mobile-first, accessible interface
+- 🧪 **Test-Driven Development** - Comprehensive test coverage with Vitest
+
+## 🔒 Security by Default
+
+This application is built with security as a core principle, leveraging modern tools that provide protection out-of-the-box:
+
+- **SQL Injection Protection** - Supabase client library uses parameterized queries internally, making SQL injection attacks impossible. All database queries are automatically sanitized at the driver level.
+
+- **Row-Level Security (RLS)** - PostgreSQL policies enforce data access at the database level. Users can only view and modify their own walks, even if client-side checks are bypassed.
+
+- **XSS Prevention** - React automatically escapes all rendered content, preventing cross-site scripting attacks. User-generated content is safely displayed as text, not executable code.
+
+- **Server-Side Authentication** - All sensitive operations require server-side auth validation using Supabase's server client. Authentication checks happen on the server, not just in the browser.
+
+- **Type Safety** - TypeScript provides compile-time validation, catching potential security issues during development before they reach production.
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4
+- **UI Patterns:** React Server Components & Client Components
+- **State Management:** React hooks (useState, useOptimistic, useTransition)
+
+### Backend
+- **Database:** PostgreSQL (via Supabase)
+- **API:** Supabase Auto-generated REST API
+- **Authentication:** Supabase Auth
+- **Server Actions:** Next.js Server Actions
+
+### Testing & Development
+- **Testing:** Vitest + React Testing Library
+- **Development Approach:** Test-Driven Development (TDD)
+- **Code Quality:** TypeScript strict mode
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- npm or pnpm
+- Supabase account
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/SamOllason/woof-woof-walkies.git
+cd woof-woof-walkies
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Add your Supabase credentials to `.env.local`:
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-## Learn More
+4. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧪 Running Tests
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Run all tests
+npm test
 
-## Deploy on Vercel
+# Run tests in watch mode
+npm run test:watch
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Run tests with coverage
+npm run test:coverage
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## � Deployment
+
+This project is designed for zero-config deployment on Vercel:
+
+1. Push your code to GitHub
+2. Import repository at [vercel.com](https://vercel.com)
+3. Add environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Deploy
+
+Vercel auto-detects Next.js configuration and enables automatic deployments on every push.
+
+## �📚 Documentation
+
+- [Project Specification](./documentation/specification.md) - Detailed requirements and technical decisions
+- [Development Roadmap](./documentation/roadmap.md) - Feature progress and planning
+- [Architecture Diagrams](./documentation/architecture/) - Component architecture and data flow
+- [GitHub Copilot Instructions](./.github/copilot-instructions.md) - Development guidelines and patterns
+
+## 🎓 Learning Focus Areas
+
+This project emphasizes:
+
+- **Modern React Patterns** - Server Components, Client Components, Server Actions, useOptimistic
+- **Accessibility First** - WCAG AA compliance, semantic HTML, keyboard navigation
+- **Test-Driven Development** - Writing tests before implementation
+- **TypeScript Best Practices** - Strict mode, proper typing, type safety
+- **Database Security** - Row-Level Security policies, server-side validation
+- **Progressive Enhancement** - Works without JavaScript where possible
+- **Performance Optimization** - Server-side rendering, optimistic updates, debouncing
+
+## 📝 License
+
+MIT
+
+## 👤 Author
+
+**Sam Ollason**
+- GitHub: [@SamOllason](https://github.com/SamOllason)
+
+---
+
+*Built with ❤️ as a portfolio and learning project*

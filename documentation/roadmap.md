@@ -312,3 +312,11 @@ After completing Phases 3-5, you can say:
 ---
 
 _This roadmap prioritizes features that maximize learning and employability. Adjust based on your goals and available time!_
+
+
+
+# Ideas
+
+1. Using AI to recommend walks in local area, google maps integration?
+2. Record walks using GPS? link to e.g. Strava?
+3. Walk inspiration - things to see in local area based on location
