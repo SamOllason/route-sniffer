@@ -3,18 +3,26 @@ import type { CreateWalkInput } from '@/types/walk'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
-export default function NewWalkPage() {
+export default async function NewWalkPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   const handleSubmit = async (walkData: CreateWalkInput) => {
     'use server'
 
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
-    // Insert the walk with null user_id (temporary for testing)
+    if (!user) {
+      throw new Error('You must be logged in to add a walk')
+    }
+
+    // Insert the walk with the authenticated user's ID
     const { data, error } = await supabase
       .from('walks')
       .insert({
         ...walkData,
-        user_id: null,
+        user_id: user.id,
       })
       .select()
       .single()

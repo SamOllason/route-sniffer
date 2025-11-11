@@ -4,10 +4,13 @@ import { WalkCard } from '@/components/WalkCard'
 
 export default async function Home() {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
+  // Fetch only the current user's walks
   const { data: walks, error } = await supabase
     .from('walks')
     .select('*')
+    .eq('user_id', user?.id)
     .order('created_at', { ascending: false })
 
   return (

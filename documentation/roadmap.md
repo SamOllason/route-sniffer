@@ -31,42 +31,22 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 - [x] 11 passing tests for WalkCard
 - [x] Component architecture diagrams
 
+### Phase 3: Authentication
+- [x] Sign up page with email/password
+- [x] Login page
+- [x] Logout functionality (Header with LogoutButton)
+- [x] Protected routes (middleware)
+- [x] Server-side session checking
+- [x] Update walks table to use real user_id
+- [x] Enable Row-Level Security (RLS) policies (all 4 CRUD policies)
+- [x] User can only see/edit their own walks
+- [x] Tests for auth flow (42 tests passing)
+- [x] Responsive Header component with mobile menu
+- [x] Route groups for authenticated vs auth pages
+
 ---
 
 ## 🎯 Priority Roadmap
-
-### Phase 3: Authentication (HIGHEST PRIORITY) 🔐
-**Goal:** Enable multi-user functionality with secure authentication  
-**Time estimate:** 2-3 hours  
-**Employability impact:** ⭐⭐⭐⭐⭐
-
-**Features:**
-- [ ] Sign up page with email/password
-- [ ] Login page
-- [ ] Logout functionality
-- [ ] Protected routes (middleware)
-- [ ] Server-side session checking
-- [ ] Update walks table to require user_id
-- [ ] Enable Row-Level Security (RLS) policies
-- [ ] User can only see/edit their own walks
-- [ ] Tests for auth flow
-
-**Why this matters:**
-- Authentication is required in virtually every real-world app
-- Shows you understand security fundamentals
-- Protected routes are a common interview topic
-- RLS demonstrates database security knowledge
-- Every employer wants to see auth experience
-
-**Skills learned:**
-- Supabase Auth API
-- Next.js middleware
-- Server-side session management
-- Cookie handling
-- Database security policies
-- Protected route patterns
-
----
 
 ### Phase 4: Edit & Delete Walks (Complete CRUD) ✏️
 **Goal:** Full CRUD operations (Create, Read, Update, Delete)  
@@ -235,6 +215,54 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 **Export/Import:**
 - [ ] Export walks to CSV/JSON
 - [ ] Import from other apps
+
+---
+
+### Phase 11: Database Migration Management (Production Best Practice) 🔧
+**Goal:** Professional database change management  
+**Time estimate:** 2-3 hours  
+**Employability impact:** ⭐⭐⭐⭐
+
+**Features:**
+- [ ] Install and configure Supabase CLI
+- [ ] Initialize local Supabase project
+- [ ] Pull current schema to migration files
+- [ ] Version control all database changes in Git
+- [ ] Create migration files for future changes (instead of manual SQL)
+- [ ] Set up CI/CD pipeline to run migrations
+- [ ] Implement idempotent migrations (safe to run multiple times)
+- [ ] Add rollback capabilities
+
+**Why this matters:**
+- Production apps NEVER run SQL manually in dashboards
+- All database changes go through code review
+- Changes are versioned and auditable
+- Eliminates human error from manual SQL execution
+- CI/CD can automatically apply migrations on deploy
+- Critical for team collaboration
+
+**Skills learned:**
+- Supabase CLI
+- Database migration tools (Flyway, Prisma Migrate alternatives)
+- CI/CD for database changes
+- GitHub Actions workflows
+- Idempotent SQL patterns
+- DevOps best practices
+
+**Tools:**
+- Supabase CLI
+- GitHub Actions
+- Migration versioning strategy
+
+**Example workflow:**
+```bash
+# Create a new migration
+npx supabase migration new add_feature
+
+# Edit migration file in supabase/migrations/
+# Commit to Git, open PR
+# CI/CD runs migration on merge
+```
 
 ---
 
