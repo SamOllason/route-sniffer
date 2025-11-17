@@ -95,83 +95,58 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 - **Cost Protection:** Rate limiting (5 requests/hour/user), caching (24hr), hard budget limits ($10/month)
 - **Fallback Strategy:** Feature flag for emergency disable, graceful degradation with message
 
-**Features:**
-- [ ] **Step 1: API Setup & Cost Protection**
+**MVP Approach - Get It Working First:**
+- [x] **Step 1: API Setup**
   - [x] Create OpenAI account and get API key
-  - [ ] Set monthly spending limit ($10) in OpenAI dashboard
-  - [ ] Create Google Cloud account and enable Maps APIs (Geocoding + Places)
-  - [ ] Add API keys to `.env.local` and `.env.example`
-  - [ ] Add `AI_RECOMMENDATIONS_ENABLED` feature flag to environment variables
-  - [ ] Install dependencies: `openai`, `@googlemaps/google-maps-services-js`
+  - [x] Create Google Cloud account and enable Maps APIs (Geocoding)
+  - [x] Add API keys to `.env.local` and `.env.example`
+  - [x] Adx `AI_RECOMMENDATIONS_ENABLED` feature flag
+  - [x] Install dependencies: `openai`
 
-- [ ] **Step 2: Rate Limiting Infrastructure**
-  - [ ] Create `ai_usage` table in Supabase for tracking requests
-  - [ ] RLS policy: users can only read their own usage
-  - [ ] Server Action: `checkAIRateLimit()` - validates user hasn't exceeded hourly limit (5 requests)
-  - [ ] Tests for rate limiting logic
-  - [ ] User-friendly error message component for rate limit exceeded
-
-- [ ] **Step 3: Google Maps Integration**
-  - [ ] Create utility: `geocodeAddress()` - converts postcode/address to lat/lng
-  - [ ] Create utility: `findNearbyPlaces()` - finds parks, trails, points of interest within radius
-  - [ ] Handle API errors gracefully (invalid address, API quota exceeded)
-  - [ ] Tests for geocoding and places utilities
-  - [ ] Mock Google Maps API in tests
-
-- [ ] **Step 4: OpenAI Integration & Prompt Engineering**
+- [ ] **Step 2: Basic OpenAI Integration**
   - [ ] Create utility: `generateWalkRecommendations()` - calls OpenAI API
-  - [ ] Design prompt template that includes:
-    - User's walk history summary (avg distance, difficulty preferences)
-    - Nearby locations from Google Places
-    - Request for 3-5 personalized recommendations with explanations
-  - [ ] Use GPT-4o-mini model for cost efficiency
-  - [ ] Optimize token usage (concise prompts, JSON response format)
-  - [ ] Handle OpenAI API errors (rate limits, timeouts, invalid responses)
-  - [ ] Tests with mocked OpenAI responses
+  - [ ] Simple prompt: "Suggest 3 dog walks near [location]"
+  - [ ] Use GPT-4o-mini model
+  - [ ] Return JSON response
+  - [ ] Basic error handling
 
-- [ ] **Step 5: Caching Layer**
-  - [ ] Create `ai_recommendations_cache` table in Supabase
-  - [ ] Cache key: `user_id + location` (hashed)
-  - [ ] Cache duration: 24 hours
-  - [ ] Server Action: Check cache before calling OpenAI
-  - [ ] Automatic cache invalidation after 24 hours
-  - [ ] Tests for cache hit/miss scenarios
-
-- [ ] **Step 6: UI - Recommendations Page**
-  - [ ] Create `/recommendations` page (Server Component)
-  - [ ] Location search input with autocomplete (optional enhancement)
+- [ ] **Step 3: Simple UI - Recommendations Page**
+  - [ ] Create `/recommendations` page
+  - [ ] Simple text input for location
   - [ ] "Get Recommendations" button
-  - [ ] Loading state: "Finding great walks near you..."
-  - [ ] Results display: Card-based layout with AI-generated recommendations
-  - [ ] Each card shows: route name, distance, difficulty, highlights, "why recommended"
-  - [ ] "Save as Walk" button (pre-fills AddWalkForm with AI suggestion)
-  - [ ] Error states: rate limit exceeded, API errors, invalid location
-  - [ ] Feature disabled message if `AI_RECOMMENDATIONS_ENABLED=false`
+  - [ ] Loading state
+  - [ ] Display AI recommendations as simple cards
+  - [ ] Error messages for failures
 
-- [ ] **Step 7: Server Actions**
-  - [ ] `getRecommendationsAction(location: string)`:
-    - Check feature flag (throw error if disabled)
-    - Validate user authentication
-    - Check rate limit (throw error if exceeded)
-    - Check cache (return if hit)
-    - Geocode location
-    - Find nearby places
-    - Fetch user's walk history for personalization
-    - Generate AI recommendations
-    - Store in cache
-    - Log usage to `ai_usage` table
-    - Return recommendations
-  - [ ] Comprehensive error handling with user-friendly messages
-  - [ ] Tests for all happy/sad paths
+- [ ] **Step 4: Server Action**
+  - [ ] `getRecommendationsAction(location: string)`
+  - [ ] Check feature flag
+  - [ ] Validate user authentication
+  - [ ] Call OpenAI utility
+  - [ ] Return recommendations
+  - [ ] Error handling
 
-- [ ] **Step 8: Documentation & Architecture**
-  - [ ] Create `documentation/architecture/ai-recommendations.md`
-  - [ ] Document data flow diagram (User → Google Maps → OpenAI → Cache → UI)
-  - [ ] Document AI decisions (model choice, cost controls, prompt design)
-  - [ ] Document rate limiting strategy
-  - [ ] Add cost analysis section (expected costs, worst-case scenarios)
-  - [ ] Add to README feature list
-  - [ ] Update `.env.example` with new API keys
+**Add Later (Polish & Cost Control):**
+- [ ] **Step 5: Google Maps Integration** (for real location data)
+  - [ ] Geocoding API integration
+  - [ ] Places API for nearby parks
+  - [ ] Enhance prompt with real POI data
+
+- [ ] **Step 6: Rate Limiting** (prevent cost overruns)
+  - [ ] `ai_usage` table in Supabase
+  - [ ] 5 requests/hour/user limit
+  - [ ] Rate limit UI component
+
+- [ ] **Step 7: Caching** (reduce API calls)
+  - [ ] `ai_recommendations_cache` table
+  - [ ] 24-hour cache per location
+  - [ ] Check cache before OpenAI call
+
+- [ ] **Step 8: Advanced Features**
+  - [ ] User history personalization
+  - [ ] "Save as Walk" button
+  - [ ] Location autocomplete
+  - [ ] Architecture documentation
 
 **Skills learned:**
 - OpenAI API integration and prompt engineering
