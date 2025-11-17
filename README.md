@@ -12,6 +12,7 @@ This is a **learning-focused portfolio project** demonstrating modern full-stack
 - ✏️ **Full CRUD Operations** - Create, read, update, and delete walks
 - 🔍 **Advanced Filtering** - Search by name, difficulty, and distance with URL-based state
 - ⚡ **Optimistic UI Updates** - Instant feedback with automatic rollback on errors
+- 🤖 **AI-Powered Recommendations** - GPT-4 integration for personalized walk suggestions
 - 📱 **Responsive Design** - Mobile-first, accessible interface
 - 🧪 **Test-Driven Development** - Comprehensive test coverage with Vitest
 
@@ -43,6 +44,8 @@ This application is built with security as a core principle, leveraging modern t
 - **API:** Supabase Auto-generated REST API
 - **Authentication:** Supabase Auth
 - **Server Actions:** Next.js Server Actions
+- **AI Integration:** OpenAI API (GPT-4o-mini)
+- **External APIs:** Google Maps API (Geocoding & Places)
 
 ### Testing & Development
 - **Testing:** Vitest + React Testing Library
@@ -78,6 +81,9 @@ Add your Supabase credentials to `.env.local`:
 ```
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+OPENAI_API_KEY=your_openai_api_key
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+AI_RECOMMENDATIONS_ENABLED=true
 ```
 
 4. Run the development server:
@@ -109,6 +115,9 @@ This project is designed for zero-config deployment on Vercel:
 3. Add environment variables:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `OPENAI_API_KEY`
+   - `GOOGLE_MAPS_API_KEY`
+   - `AI_RECOMMENDATIONS_ENABLED`
 4. Deploy
 
 Vercel auto-detects Next.js configuration and enables automatic deployments on every push.
@@ -125,12 +134,14 @@ Vercel auto-detects Next.js configuration and enables automatic deployments on e
 This project emphasizes:
 
 - **Modern React Patterns** - Server Components, Client Components, Server Actions, useOptimistic
+- **AI Integration** - OpenAI GPT-4 API integration for intelligent recommendations
 - **Accessibility First** - WCAG AA compliance, semantic HTML, keyboard navigation
 - **Test-Driven Development** - Writing tests before implementation
 - **TypeScript Best Practices** - Strict mode, proper typing, type safety
 - **Database Security** - Row-Level Security policies, server-side validation
 - **Progressive Enhancement** - Works without JavaScript where possible
 - **Performance Optimization** - Server-side rendering, optimistic updates, debouncing
+- **External API Integration** - OpenAI and Google Maps API orchestration
 
 ## 📝 License
 
