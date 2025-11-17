@@ -195,7 +195,64 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 8: File Upload (Walk Photos) 📸
+### Phase 8: Monetization - Amazon Affiliate Integration 💰
+**Time estimate:** 2-3 hours  
+**Employability impact:** ⭐⭐⭐⭐ (Shows business acumen!)
+
+**Goal:** Integrate Amazon Associates affiliate links for dog walking gear recommendations, demonstrating understanding of product monetization strategies.
+
+**Features:**
+- [ ] Sign up for Amazon Associates program
+- [ ] Add recommended gear section to AI walk recommendations
+- [ ] Context-aware product suggestions based on walk type:
+  - Water bowls for long walks
+  - Reflective gear for evening walks
+  - Cooling vests for summer routes
+  - Paw protection for rough terrain
+- [ ] Affiliate link tracking with proper disclosure
+- [ ] "Recommended Gear" component with product cards
+- [ ] Analytics tracking for click-through rates
+
+**Implementation:**
+```typescript
+interface RecommendedGear {
+  name: string
+  affiliateLink: string
+  reason: string
+  category: 'hydration' | 'safety' | 'comfort' | 'training'
+}
+
+// Enhance AI recommendations with gear suggestions
+{
+  walkRecommendation: {...},
+  recommendedGear: [
+    {
+      name: "Collapsible Water Bowl",
+      affiliateLink: "https://amzn.to/xyz",
+      reason: "Perfect for water station stops on this 3km walk",
+      category: "hydration"
+    }
+  ]
+}
+```
+
+**Skills learned:**
+- Affiliate marketing integration
+- Product recommendation algorithms
+- Monetization strategy implementation
+- User experience with commercial features
+- FTC disclosure compliance
+- Analytics and conversion tracking
+
+**Business Value:**
+- Shows understanding of revenue generation
+- Demonstrates product thinking beyond pure tech
+- Real-world monetization experience
+- Commission: ~4.5% on pet supplies (sustainable revenue model)
+
+---
+
+### Phase 9: File Upload (Walk Photos) 📸
 **Time estimate:** 2-3 hours  
 **Employability impact:** ⭐⭐⭐⭐
 
@@ -217,7 +274,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 9: Loading States & Error Handling 🎨
+### Phase 10: Loading States & Error Handling 🎨
 **Time estimate:** 1-2 hours  
 **Employability impact:** ⭐⭐⭐⭐
 
@@ -238,7 +295,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 10: Pagination / Infinite Scroll 📜
+### Phase 11: Pagination / Infinite Scroll 📜
 **Time estimate:** 2 hours  
 **Employability impact:** ⭐⭐⭐
 
@@ -257,7 +314,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 11: Dark Mode 🌙
+### Phase 12: Dark Mode 🌙
 **Time estimate:** 30-60 minutes  
 **Employability impact:** ⭐⭐
 
@@ -276,7 +333,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 12: Advanced Features (Polish)
+### Phase 13: Advanced Features (Polish)
 
 **Analytics Dashboard:**
 - [ ] Total distance walked
@@ -300,7 +357,7 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 
 ---
 
-### Phase 13: Database Migration Management (Production Best Practice) 🔧
+### Phase 14: Database Migration Management (Production Best Practice) 🔧
 **Goal:** Professional database change management  
 **Time estimate:** 2-3 hours  
 **Employability impact:** ⭐⭐⭐⭐
