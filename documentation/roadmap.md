@@ -129,37 +129,77 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
   - [x] Comprehensive error handling
   - [x] Deployed to Vercel production
 
-**Add Later (Polish & Cost Control):**
-- [ ] **Step 5: Google Maps Integration** (for real location data)
-  - [ ] Geocoding API integration
-  - [ ] Places API for nearby parks
-  - [ ] Enhance prompt with real POI data
+**Next: Custom Route Generation (AI + Maps Integration):**
+> See detailed architecture: `documentation/architecture/ai-route-generation.md`
 
-- [ ] **Step 6: Rate Limiting** (prevent cost overruns)
+- [ ] **Step 5: Google Maps APIs Setup**
+  - [x] Enable Places API in Google Cloud Console
+  - [ ] Enable Directions API in Google Cloud Console
+  - [ ] Verify API keys have necessary permissions
+
+- [ ] **Step 6: Build Map Utilities**
+  - [ ] Create `src/lib/maps/geocoding.ts` - Convert location text → coordinates
+  - [ ] Create `src/lib/maps/places.ts` - Find nearby parks, cafes, trails
+  - [ ] Create `src/lib/maps/directions.ts` - Generate walking routes from waypoints
+  - [ ] Create `src/types/maps.ts` - TypeScript interfaces
+  - [ ] Test utilities with real locations
+
+- [ ] **Step 7: Enhance AI for Route Generation**
+  - [ ] Update OpenAI prompt to generate waypoints (not just text)
+  - [ ] Pass real POI data from Places API to AI
+  - [ ] AI returns structured waypoints: `[{lat, lng, name}]`
+  - [ ] Update `WalkRecommendation` type to include waypoints
+
+- [ ] **Step 8: Integrate Full Flow**
+  - [ ] Wire up: Geocoding → Places → OpenAI → Directions
+  - [ ] Update recommendations page with route preferences:
+    - Distance selector (1-10km)
+    - Must-include POIs (cafe, dog park, etc.)
+    - Circular route toggle
+  - [ ] Display generated routes with directions
+
+- [ ] **Step 9: Visual Map Display**
+  - [ ] Create `src/components/RouteMap.tsx` 
+  - [ ] Display route polyline on Google Map
+  - [ ] Show waypoint markers (start, POIs, end)
+  - [ ] Add distance/duration info
+  - [ ] "Save as Walk" button
+
+- [ ] **Step 10: Deploy & Test**
+  - [ ] Deploy to Vercel
+  - [ ] Test with multiple locations
+  - [ ] Verify cost stays low (~$0.04/route)
+
+**Add Later (Cost Control & Polish):**
+- [ ] **Rate Limiting** (prevent cost overruns)
   - [ ] `ai_usage` table in Supabase
   - [ ] 5 requests/hour/user limit
   - [ ] Rate limit UI component
 
-- [ ] **Step 7: Caching** (reduce API calls)
+- [ ] **Caching** (reduce API calls)
   - [ ] `ai_recommendations_cache` table
-  - [ ] 24-hour cache per location
-  - [ ] Check cache before OpenAI call
+  - [ ] 24-hour cache per location + preferences
+  - [ ] Check cache before API calls
 
-- [ ] **Step 8: Advanced Features**
-  - [ ] User history personalization
-  - [ ] "Save as Walk" button
-  - [ ] Location autocomplete
-  - [ ] Architecture documentation
+- [ ] **Advanced Features**
+  - [ ] Weather-aware routing (shaded paths in summer)
+  - [ ] Real-time crowd data
+  - [ ] Terrain preferences (flat vs hilly)
+  - [ ] Save favorite routes
+  - [ ] Share routes via link
 
 **Skills learned:**
 - OpenAI API integration and prompt engineering
-- Google Maps API (Geocoding + Places)
+- Google Maps API (Geocoding, Places, Directions)
+- Multi-API orchestration (Maps + AI working together)
 - Cost management for AI services (rate limiting, caching, budget controls)
 - LLM selection criteria (performance vs cost trade-offs)
-- Multi-API orchestration (combining Maps + AI)
 - Feature flags for production safety
 - Caching strategies for expensive operations
 - User experience design for AI features (loading states, error handling)
+- Custom route generation algorithms
+- Waypoint-based navigation
+- Interactive map components
 
 **Key AI Decisions:**
 
