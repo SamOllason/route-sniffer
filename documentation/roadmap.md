@@ -144,12 +144,15 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
   - [x] Create `src/types/maps.ts` - TypeScript interfaces
   - [x] Utilities created (will test on Vercel deployment)
 
-- [ ] **Step 7: Enhance AI for Route Generation**
-  - [ ] Create `generateCustomRoute()` function in `openai.ts`
-  - [ ] Update OpenAI prompt to generate waypoints (not just text)
-  - [ ] Pass real POI data from Places API to AI
-  - [ ] AI returns structured waypoints: `[{lat, lng, name}]`
-  - [ ] Integrate full flow: Geocoding → Places → OpenAI → Directions
+- [x] **Step 7: Enhance AI for Route Generation**
+  - [x] Create `generateCustomRoute()` function in `openai.ts`
+  - [x] Update OpenAI prompt to generate waypoints (not just text)
+  - [x] Pass real POI data from Places API to AI
+  - [x] AI returns structured waypoints: `[{lat, lng, name}]`
+  - [x] Integrate full flow: Geocoding → Places → OpenAI → Directions
+  - [x] Added `RoutePreferences` interface for customization
+  - [x] Implemented helper functions: `generateWaypointsWithAI()`, `generateRouteName()`, `generateHighlights()`
+  - [x] Comprehensive error handling for each API step
 
 - [ ] **Step 8: Update UI for Custom Routes**
   - [ ] Update recommendations page with route preferences form:

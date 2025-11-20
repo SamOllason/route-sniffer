@@ -1,5 +1,9 @@
 import OpenAI from 'openai'
 import { HttpsProxyAgent } from 'https-proxy-agent'
+import { geocodeLocation } from '@/lib/maps/geocoding'
+import { findAllDogWalkingPOIs } from '@/lib/maps/places'
+import { getWalkingDirections } from '@/lib/maps/directions'
+import type { RouteRecommendation, Waypoint } from '@/types/maps'
 
 // Function to get OpenAI client (lazy initialization)
 // This ensures the API key is checked at runtime, not at module load time
@@ -159,4 +163,254 @@ Example format:
     
     throw new Error('Failed to generate recommendations. Please try again.')
   }
+}
+
+/**
+ * Route preferences for custom route generation
+ */
+export interface RoutePreferences {
+  distance: number // Target distance in kilometers
+  mustInclude?: string[] // Required POI types: 'cafe', 'dog_park', etc.
+  preferences?: string[] // Nice-to-have features: 'off-leash', 'shaded', 'scenic'
+  circular?: boolean // Default: true
+}
+
+/**
+ * Generates a custom dog walking route using AI + Google Maps APIs
+ * 
+ * This function orchestrates multiple APIs to create personalized routes:
+ * 1. Geocoding API: Converts location text to coordinates
+ * 2. Places API: Finds nearby dog-friendly POIs
+ * 3. OpenAI: Intelligently selects and sequences waypoints
+ * 4. Directions API: Calculates the actual walking route
+ * 
+ * @param location - Starting location (e.g., "Bradford on Avon", "SW1A 1AA")
+ * @param preferences - Route customization options
+ * @returns Complete route with directions, distance, and waypoints
+ * 
+ * @example
+ * const route = await generateCustomRoute('Bradford on Avon', {
+ *   distance: 2,
+ *   mustInclude: ['cafe'],
+ *   preferences: ['off-leash', 'scenic'],
+ *   circular: true
+ * })
+ */
+export async function generateCustomRoute(
+  location: string,
+  preferences: RoutePreferences
+): Promise<RouteRecommendation> {
+  try {
+    // Step 1: Geocode the location to get coordinates
+    console.log(`📍 Step 1: Geocoding "${location}"...`)
+    const geocodeResult = await geocodeLocation(location)
+    const startCoords = geocodeResult.coordinates
+    console.log(`✅ Location found: ${geocodeResult.formattedAddress}`)
+
+    // Step 2: Find nearby dog-walking POIs
+    // Search radius based on desired distance (add 50% buffer)
+    const searchRadius = preferences.distance * 1000 * 1.5 // km → meters + buffer
+    console.log(`🔍 Step 2: Finding POIs within ${searchRadius}m...`)
+    
+    const pois = await findAllDogWalkingPOIs(startCoords, searchRadius)
+    console.log(`✅ Found ${pois.all.length} potential waypoints`)
+
+    // Step 3: Use OpenAI to intelligently select and sequence waypoints
+    console.log('🤖 Step 3: AI selecting optimal waypoints...')
+    const aiWaypoints = await generateWaypointsWithAI(
+      startCoords,
+      pois.all,
+      preferences,
+      geocodeResult.formattedAddress
+    )
+    console.log(`✅ AI selected ${aiWaypoints.length} waypoints`)
+
+    // Step 4: Get walking directions from Google Directions API
+    console.log('🗺️  Step 4: Calculating walking route...')
+    const directions = await getWalkingDirections(aiWaypoints)
+    console.log(`✅ Route calculated: ${directions.distance}m, ${directions.duration}s`)
+
+    // Step 5: Build the complete route recommendation
+    const route: RouteRecommendation = {
+      routeName: generateRouteName(aiWaypoints, preferences),
+      waypoints: aiWaypoints,
+      estimatedDistance: `${(directions.distance / 1000).toFixed(1)}km`,
+      highlights: generateHighlights(aiWaypoints, preferences),
+      directions: directions, // Include full directions for map display
+    }
+
+    return route
+
+  } catch (error) {
+    console.error('❌ Error generating custom route:', error)
+    
+    if (error instanceof Error) {
+      // Pass through specific error messages
+      if (error.message.includes('not found') || error.message.includes('Geocoding')) {
+        throw new Error(`Could not find location: ${location}. Please try a more specific address.`)
+      }
+      if (error.message.includes('No places found')) {
+        throw new Error('No suitable walking locations found nearby. Try a different area.')
+      }
+      if (error.message.includes('AI service')) {
+        throw error // Already user-friendly
+      }
+    }
+    
+    throw new Error('Failed to generate custom route. Please try again.')
+  }
+}
+
+/**
+ * Uses OpenAI to select and sequence waypoints for an optimal route
+ * 
+ * The AI considers:
+ * - Desired distance (creates circular route matching target)
+ * - Must-include POIs (ensures cafe/dog park is included)
+ * - User preferences (prioritizes off-leash areas, shade, etc.)
+ * - Efficient sequencing (minimizes backtracking)
+ */
+async function generateWaypointsWithAI(
+  startCoords: { lat: number; lng: number },
+  availablePOIs: Array<{ placeId: string; name: string; location: { lat: number; lng: number }; types: string[]; rating?: number; distanceFromStart?: number }>,
+  preferences: RoutePreferences,
+  locationName: string
+): Promise<Waypoint[]> {
+  // Format POI data for AI prompt
+  const poisSummary = availablePOIs
+    .slice(0, 20) // Limit to top 20 to keep prompt size reasonable
+    .map((poi, index) => {
+      const distance = poi.distanceFromStart 
+        ? `${(poi.distanceFromStart / 1000).toFixed(1)}km away`
+        : 'nearby'
+      const rating = poi.rating ? `★${poi.rating}` : ''
+      const types = poi.types.join(', ')
+      
+      return `${index + 1}. "${poi.name}" (${types}) - ${distance} ${rating}
+   Location: ${poi.location.lat}, ${poi.location.lng}`
+    })
+    .join('\n')
+
+  const mustIncludeText = preferences.mustInclude?.length 
+    ? `\nMUST INCLUDE: ${preferences.mustInclude.join(', ')}`
+    : ''
+  
+  const preferencesText = preferences.preferences?.length
+    ? `\nPREFERRED FEATURES: ${preferences.preferences.join(', ')}`
+    : ''
+
+  const prompt = `You are an expert at designing dog walking routes.
+
+TASK: Create a ${preferences.circular !== false ? 'circular' : 'point-to-point'} dog walking route.
+
+STARTING POINT: ${locationName}
+Coordinates: ${startCoords.lat}, ${startCoords.lng}
+
+TARGET DISTANCE: ${preferences.distance}km (±10% is acceptable)${mustIncludeText}${preferencesText}
+
+AVAILABLE PLACES NEARBY:
+${poisSummary}
+
+INSTRUCTIONS:
+1. Select 2-4 waypoints that create a route close to ${preferences.distance}km
+2. The route should start and end at the starting point (circular)
+3. Include any MUST INCLUDE locations if available
+4. Prioritize PREFERRED FEATURES when choosing locations
+5. Sequence waypoints efficiently (no backtracking)
+6. Consider variety (mix of parks, water, cafes, etc.)
+
+OUTPUT FORMAT (JSON only, no markdown):
+{
+  "waypoints": [
+    {"lat": ${startCoords.lat}, "lng": ${startCoords.lng}, "name": "Start"},
+    {"lat": 51.xxx, "lng": -2.xxx, "name": "Place Name"},
+    ...
+    {"lat": ${startCoords.lat}, "lng": ${startCoords.lng}, "name": "End"}
+  ],
+  "reasoning": "Brief explanation of route choices"
+}`
+
+  const openai = getOpenAIClient()
+  
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are an expert dog walking route planner. Respond with valid JSON only.',
+      },
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ],
+    temperature: 0.7,
+    max_tokens: 1000,
+  })
+
+  const content = response.choices[0]?.message?.content
+  if (!content) {
+    throw new Error('No response from AI service')
+  }
+
+  // Parse AI response
+  const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+  const aiResponse = JSON.parse(cleanContent) as { waypoints: Waypoint[]; reasoning: string }
+
+  console.log(`🤖 AI reasoning: ${aiResponse.reasoning}`)
+
+  // Validate waypoints
+  if (!aiResponse.waypoints || aiResponse.waypoints.length < 2) {
+    throw new Error('AI generated invalid waypoints')
+  }
+
+  return aiResponse.waypoints
+}
+
+/**
+ * Generates a descriptive route name based on waypoints
+ */
+function generateRouteName(waypoints: Waypoint[], preferences: RoutePreferences): string {
+  // Extract notable waypoint names (skip Start/End)
+  const notableWaypoints = waypoints
+    .filter(w => w.name !== 'Start' && w.name !== 'End')
+    .map(w => w.name)
+
+  if (notableWaypoints.length === 0) {
+    return `${preferences.distance}km Circular Walk`
+  }
+
+  // Use first notable waypoint in name
+  const firstPlace = notableWaypoints[0].split(' ').slice(0, 2).join(' ') // Shorten long names
+  return `${firstPlace} Loop (${preferences.distance}km)`
+}
+
+/**
+ * Generates route highlights text
+ */
+function generateHighlights(waypoints: Waypoint[], preferences: RoutePreferences): string {
+  const features: string[] = []
+  
+  // Extract waypoint names
+  const places = waypoints
+    .filter(w => w.name !== 'Start' && w.name !== 'End')
+    .map(w => w.name)
+  
+  if (places.length > 0) {
+    features.push(`Via ${places.join(', ')}`)
+  }
+  
+  if (preferences.mustInclude?.includes('cafe')) {
+    features.push('Dog-friendly cafe stop')
+  }
+  
+  if (preferences.preferences?.includes('off-leash')) {
+    features.push('Off-leash areas')
+  }
+  
+  if (preferences.preferences?.includes('scenic')) {
+    features.push('Scenic views')
+  }
+  
+  return features.join(' • ') || 'Circular dog walking route'
 }
