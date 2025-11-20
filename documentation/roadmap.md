@@ -132,31 +132,32 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 **Next: Custom Route Generation (AI + Maps Integration):**
 > See detailed architecture: `documentation/architecture/ai-route-generation.md`
 
-- [ ] **Step 5: Google Maps APIs Setup**
+- [x] **Step 5: Google Maps APIs Setup**
   - [x] Enable Places API in Google Cloud Console
   - [x] Enable Directions API in Google Cloud Console
-  - [ ] Verify API keys have necessary permissions
+  - [x] API keys configured in Vercel
 
-- [ ] **Step 6: Build Map Utilities**
-  - [ ] Create `src/lib/maps/geocoding.ts` - Convert location text → coordinates
-  - [ ] Create `src/lib/maps/places.ts` - Find nearby parks, cafes, trails
-  - [ ] Create `src/lib/maps/directions.ts` - Generate walking routes from waypoints
-  - [ ] Create `src/types/maps.ts` - TypeScript interfaces
-  - [ ] Test utilities with real locations
+- [x] **Step 6: Build Map Utilities**
+  - [x] Create `src/lib/maps/geocoding.ts` - Convert location text → coordinates
+  - [x] Create `src/lib/maps/places.ts` - Find nearby parks, cafes, trails
+  - [x] Create `src/lib/maps/directions.ts` - Generate walking routes from waypoints
+  - [x] Create `src/types/maps.ts` - TypeScript interfaces
+  - [x] Utilities created (will test on Vercel deployment)
 
 - [ ] **Step 7: Enhance AI for Route Generation**
+  - [ ] Create `generateCustomRoute()` function in `openai.ts`
   - [ ] Update OpenAI prompt to generate waypoints (not just text)
   - [ ] Pass real POI data from Places API to AI
   - [ ] AI returns structured waypoints: `[{lat, lng, name}]`
-  - [ ] Update `WalkRecommendation` type to include waypoints
+  - [ ] Integrate full flow: Geocoding → Places → OpenAI → Directions
 
-- [ ] **Step 8: Integrate Full Flow**
-  - [ ] Wire up: Geocoding → Places → OpenAI → Directions
-  - [ ] Update recommendations page with route preferences:
+- [ ] **Step 8: Update UI for Custom Routes**
+  - [ ] Update recommendations page with route preferences form:
     - Distance selector (1-10km)
     - Must-include POIs (cafe, dog park, etc.)
     - Circular route toggle
-  - [ ] Display generated routes with directions
+  - [ ] Update Server Action to use `generateCustomRoute()`
+  - [ ] Display generated routes with waypoint details
 
 - [ ] **Step 9: Visual Map Display**
   - [ ] Create `src/components/RouteMap.tsx` 
