@@ -68,7 +68,7 @@ export function Header({ onLogout }: HeaderProps) {
             className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
             onClick={() => setIsOpen(false)}
           >
-            AI Recommendations
+            ✨ AI Recommendations
           </Link>
           <LogoutButton onLogout={async () => {
             const result = await onLogout()
