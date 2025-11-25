@@ -42,6 +42,7 @@ export interface Waypoint {
   lng: number
   name: string
   type?: 'start' | 'end' | 'poi' | 'waypoint'
+  category?: 'cafe' | 'park' | 'dog_park' | 'water' | 'other' // Optional: POI category for visual distinction
 }
 
 export interface DirectionsResult {

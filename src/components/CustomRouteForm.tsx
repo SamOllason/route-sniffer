@@ -65,7 +65,7 @@ export default function CustomRouteForm({ onSubmit, isLoading = false }: CustomR
       {/* Location Input */}
       <div>
         <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-          Location *
+          Starting Location *
         </label>
         <input
           type="text"
@@ -211,6 +211,21 @@ export default function CustomRouteForm({ onSubmit, isLoading = false }: CustomR
               <label htmlFor="shaded" className="ml-2 text-sm text-gray-700">
                 Shaded Paths
               </label>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="off-road"
+                checked={preferences.includes('off-road')}
+                onChange={(e) => handleCheckboxChange('off-road', e.target.checked, setPreferences)}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                disabled={isLoading}
+              />
+              <label htmlFor="off-road" className="ml-2 text-sm text-gray-700">
+                Completely Off-Road
+              </label>
+              <span className="ml-1 text-xs text-gray-500">(avoid busy roads)</span>
             </div>
           </div>
         </fieldset>

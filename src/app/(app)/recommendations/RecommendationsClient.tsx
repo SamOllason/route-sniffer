@@ -221,6 +221,23 @@ export default function RecommendationsClient() {
             {/* Map Display */}
             <div className="mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Route Map</h3>
+              
+              {/* Map Legend */}
+              <div className="mb-3 flex flex-wrap gap-3 text-sm text-gray-600">
+                <span className="flex items-center gap-1">
+                  <span className="text-base">🏁</span> Start/End
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="text-base">☕</span> Cafe
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="text-base">🌳</span> Park
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="text-base">💧</span> Water
+                </span>
+              </div>
+              
               <RouteMap waypoints={customRoute.waypoints} height="500px" />
             </div>
 

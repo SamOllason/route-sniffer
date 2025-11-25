@@ -9,8 +9,8 @@ describe('CustomRouteForm', () => {
       const mockSubmit = vi.fn()
       render(<CustomRouteForm onSubmit={mockSubmit} />)
 
-      // Location input
-      expect(screen.getByLabelText(/location/i)).toBeInTheDocument()
+      // Starting Location input
+      expect(screen.getByLabelText(/starting location/i)).toBeInTheDocument()
       
       // Distance slider
       expect(screen.getByLabelText(/distance/i)).toBeInTheDocument()
@@ -24,6 +24,7 @@ describe('CustomRouteForm', () => {
       expect(screen.getByLabelText(/off-leash areas/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/scenic views/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/shaded paths/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/completely off-road/i)).toBeInTheDocument()
       
       // Circular route toggle
       expect(screen.getByLabelText(/circular route/i)).toBeInTheDocument()
@@ -71,7 +72,7 @@ describe('CustomRouteForm', () => {
       const mockSubmit = vi.fn()
       render(<CustomRouteForm onSubmit={mockSubmit} />)
 
-      const locationInput = screen.getByLabelText(/location/i)
+      const locationInput = screen.getByLabelText(/starting location/i)
       await user.type(locationInput, 'Bradford on Avon')
 
       expect(locationInput).toHaveValue('Bradford on Avon')
@@ -112,12 +113,15 @@ describe('CustomRouteForm', () => {
 
       const offLeashCheckbox = screen.getByLabelText(/off-leash areas/i) as HTMLInputElement
       const scenicCheckbox = screen.getByLabelText(/scenic views/i) as HTMLInputElement
+      const offRoadCheckbox = screen.getByLabelText(/completely off-road/i) as HTMLInputElement
 
       await user.click(offLeashCheckbox)
       await user.click(scenicCheckbox)
+      await user.click(offRoadCheckbox)
 
       expect(offLeashCheckbox.checked).toBe(true)
       expect(scenicCheckbox.checked).toBe(true)
+      expect(offRoadCheckbox.checked).toBe(true)
     })
 
     it('allows user to toggle circular route', async () => {
@@ -210,7 +214,7 @@ describe('CustomRouteForm', () => {
       const mockSubmit = vi.fn()
       render(<CustomRouteForm onSubmit={mockSubmit} />)
 
-      const locationInput = screen.getByLabelText(/location/i)
+      const locationInput = screen.getByLabelText(/starting location/i)
       await user.type(locationInput, 'London')
 
       // Uncheck circular route
@@ -234,7 +238,7 @@ describe('CustomRouteForm', () => {
       const mockSubmit = vi.fn()
       render(<CustomRouteForm onSubmit={mockSubmit} />)
 
-      const locationInput = screen.getByLabelText(/location/i)
+      const locationInput = screen.getByLabelText(/starting location/i)
       await user.type(locationInput, 'London')
 
       const submitButton = screen.getByRole('button', { name: /generate route/i })
@@ -249,6 +253,29 @@ describe('CustomRouteForm', () => {
         )
       })
     })
+
+    it('includes off-road preference when selected', async () => {
+      const user = userEvent.setup()
+      const mockSubmit = vi.fn()
+      render(<CustomRouteForm onSubmit={mockSubmit} />)
+
+      const locationInput = screen.getByLabelText(/starting location/i)
+      await user.type(locationInput, 'London')
+
+      // Select off-road preference
+      await user.click(screen.getByLabelText(/completely off-road/i))
+
+      const submitButton = screen.getByRole('button', { name: /generate route/i })
+      await user.click(submitButton)
+
+      await waitFor(() => {
+        expect(mockSubmit).toHaveBeenCalledWith(
+          expect.objectContaining({
+            preferences: ['off-road'],
+          })
+        )
+      })
+    })
   })
 
   describe('Accessibility', () => {
@@ -257,7 +284,7 @@ describe('CustomRouteForm', () => {
       render(<CustomRouteForm onSubmit={mockSubmit} />)
 
       // All inputs should have associated labels
-      const locationInput = screen.getByLabelText(/location/i)
+      const locationInput = screen.getByLabelText(/starting location/i)
       const distanceInput = screen.getByLabelText(/distance/i)
       const cafeCheckbox = screen.getByLabelText(/cafe/i)
       const circularCheckbox = screen.getByLabelText(/circular route/i)
@@ -273,7 +300,7 @@ describe('CustomRouteForm', () => {
       const mockSubmit = vi.fn()
       render(<CustomRouteForm onSubmit={mockSubmit} />)
 
-      const locationInput = screen.getByLabelText(/location/i)
+      const locationInput = screen.getByLabelText(/starting location/i)
       await user.type(locationInput, 'London')
 
       // Tab to submit button and press Enter
@@ -295,7 +322,7 @@ describe('CustomRouteForm', () => {
       const mockSubmit = vi.fn()
       render(<CustomRouteForm onSubmit={mockSubmit} isLoading={true} />)
 
-      const locationInput = screen.getByLabelText(/location/i) as HTMLInputElement
+      const locationInput = screen.getByLabelText(/starting location/i) as HTMLInputElement
       const submitButton = screen.getByRole('button', { name: /generating/i }) as HTMLButtonElement
 
       expect(locationInput.disabled).toBe(true)
@@ -313,7 +340,7 @@ describe('CustomRouteForm', () => {
       const mockSubmit = vi.fn()
       render(<CustomRouteForm onSubmit={mockSubmit} isLoading={false} />)
 
-      const locationInput = screen.getByLabelText(/location/i) as HTMLInputElement
+      const locationInput = screen.getByLabelText(/starting location/i) as HTMLInputElement
       const submitButton = screen.getByRole('button', { name: /generate route/i }) as HTMLButtonElement
 
       expect(locationInput.disabled).toBe(false)

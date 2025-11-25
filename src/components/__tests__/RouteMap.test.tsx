@@ -115,16 +115,16 @@ describe('RouteMap', () => {
       })
     })
 
-    it('displays marker labels (S for start, E for end, numbers for POIs)', () => {
+    it('displays marker labels (emoji for start/end, coffee for cafes, numbers for others)', () => {
       render(<RouteMap waypoints={mockWaypoints} />)
       
       const markers = screen.getAllByTestId('map-marker')
       
-      // First waypoint (type: 'start') should have label 'S'
-      expect(markers[0].getAttribute('data-label')).toBe('S')
+      // First waypoint (type: 'start') should have flag emoji
+      expect(markers[0].getAttribute('data-label')).toBe('🏁')
       
-      // Last waypoint (type: 'end') should have label 'E'  
-      expect(markers[3].getAttribute('data-label')).toBe('E')
+      // Last waypoint (type: 'end') should have flag emoji  
+      expect(markers[3].getAttribute('data-label')).toBe('🏁')
       
       // Middle waypoints (type: 'poi') should have numbers
       expect(markers[1].getAttribute('data-label')).toBe('2')
@@ -243,16 +243,44 @@ describe('RouteMap', () => {
       render(<RouteMap waypoints={mockWaypoints} />)
       
       const markers = screen.getAllByTestId('map-marker')
-      // First marker should have label 'S' for start
-      expect(markers[0].getAttribute('data-label')).toBe('S')
+      // First marker should have flag emoji for start
+      expect(markers[0].getAttribute('data-label')).toBe('🏁')
     })
 
     it('differentiates end marker visually', () => {
       render(<RouteMap waypoints={mockWaypoints} />)
       
       const markers = screen.getAllByTestId('map-marker')
-      // Last marker should have label 'E' for end
-      expect(markers[3].getAttribute('data-label')).toBe('E')
+      // Last marker should have flag emoji for end
+      expect(markers[3].getAttribute('data-label')).toBe('🏁')
+    })
+
+    it('shows coffee emoji for cafe waypoints', () => {
+      const waypointsWithCafe: Waypoint[] = [
+        { lat: 51.3478, lng: -2.2514, name: 'Start', type: 'start' },
+        { lat: 51.3495, lng: -2.2540, name: 'Dog-Friendly Cafe', type: 'poi', category: 'cafe' },
+        { lat: 51.3478, lng: -2.2514, name: 'End', type: 'end' },
+      ]
+
+      render(<RouteMap waypoints={waypointsWithCafe} />)
+      
+      const markers = screen.getAllByTestId('map-marker')
+      // Cafe marker should have coffee cup emoji
+      expect(markers[1].getAttribute('data-label')).toBe('☕')
+    })
+
+    it('shows tree emoji for park waypoints', () => {
+      const waypointsWithPark: Waypoint[] = [
+        { lat: 51.3478, lng: -2.2514, name: 'Start', type: 'start' },
+        { lat: 51.3495, lng: -2.2540, name: 'Local Park', type: 'poi', category: 'park' },
+        { lat: 51.3478, lng: -2.2514, name: 'End', type: 'end' },
+      ]
+
+      render(<RouteMap waypoints={waypointsWithPark} />)
+      
+      const markers = screen.getAllByTestId('map-marker')
+      // Park marker should have tree emoji
+      expect(markers[1].getAttribute('data-label')).toBe('🌳')
     })
 
     it('shows POI markers for intermediate waypoints', () => {

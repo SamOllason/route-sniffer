@@ -73,13 +73,21 @@ export default function RouteMap({ waypoints, height = '400px' }: RouteMapProps)
         >
           {/* Render markers for each waypoint */}
           {waypoints.map((waypoint, index) => {
-            // Determine marker label based on waypoint type
+            // Determine marker label based on waypoint type and category
             let label = (index + 1).toString()
+            
             if (waypoint.type === 'start') {
-              label = 'S'
+              label = '🏁' // Start flag
             } else if (waypoint.type === 'end') {
-              label = 'E'
+              label = '🏁' // End flag
+            } else if (waypoint.category === 'cafe') {
+              label = '☕' // Coffee cup for cafes
+            } else if (waypoint.category === 'park' || waypoint.category === 'dog_park') {
+              label = '🌳' // Tree for parks
+            } else if (waypoint.category === 'water') {
+              label = '💧' // Water droplet
             }
+            // Otherwise use number (index + 1)
 
             return (
               <Marker

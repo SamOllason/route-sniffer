@@ -299,6 +299,11 @@ async function generateWaypointsWithAI(
     ? `\nPREFERRED FEATURES: ${preferences.preferences.join(', ')}`
     : ''
 
+  // Check if user wants completely off-road routes
+  const offRoadRequirement = preferences.preferences?.includes('off-road')
+    ? '\n⚠️ IMPORTANT: User wants COMPLETELY OFF-ROAD route. Avoid busy roads, narrow verges, and traffic. Prioritize parks, trails, and pedestrian paths.'
+    : ''
+
   const prompt = `You are an expert at designing dog walking routes.
 
 TASK: Create a ${preferences.circular !== false ? 'circular' : 'point-to-point'} dog walking route.
@@ -306,7 +311,7 @@ TASK: Create a ${preferences.circular !== false ? 'circular' : 'point-to-point'}
 STARTING POINT: ${locationName}
 Coordinates: ${startCoords.lat}, ${startCoords.lng}
 
-TARGET DISTANCE: ${preferences.distance}km (±10% is acceptable)${mustIncludeText}${preferencesText}
+TARGET DISTANCE: ${preferences.distance}km (±10% is acceptable)${mustIncludeText}${preferencesText}${offRoadRequirement}
 
 AVAILABLE PLACES NEARBY:
 ${poisSummary}
@@ -322,13 +327,21 @@ INSTRUCTIONS:
 OUTPUT FORMAT (JSON only, no markdown):
 {
   "waypoints": [
-    {"lat": ${startCoords.lat}, "lng": ${startCoords.lng}, "name": "Start"},
-    {"lat": 51.xxx, "lng": -2.xxx, "name": "Place Name"},
+    {"lat": ${startCoords.lat}, "lng": ${startCoords.lng}, "name": "Start", "type": "start"},
+    {"lat": 51.xxx, "lng": -2.xxx, "name": "Place Name", "type": "poi", "category": "cafe|park|dog_park|water|other"},
     ...
-    {"lat": ${startCoords.lat}, "lng": ${startCoords.lng}, "name": "End"}
+    {"lat": ${startCoords.lat}, "lng": ${startCoords.lng}, "name": "End", "type": "end"}
   ],
   "reasoning": "Brief explanation of route choices"
-}`
+}
+
+IMPORTANT: Set category field for each POI:
+- "cafe" for cafes, coffee shops, tea rooms
+- "dog_park" for dog parks, off-leash areas
+- "park" for regular parks, gardens, green spaces
+- "water" for water fountains, streams, rivers
+- "other" for other points of interest
+`
 
   const openai = getOpenAIClient()
   
