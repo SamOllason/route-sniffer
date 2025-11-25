@@ -1,11 +1,45 @@
 'use client'
 
-import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps'
+import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps'
+import { useEffect } from 'react'
 import type { Waypoint } from '@/types/maps'
 
 interface RouteMapProps {
   waypoints: Waypoint[]
   height?: string
+}
+
+/**
+ * Component to draw polyline on the map
+ * Must be inside the Map component to access the map instance
+ */
+function RoutePolyline({ waypoints }: { waypoints: Waypoint[] }) {
+  const map = useMap()
+
+  useEffect(() => {
+    if (!map || waypoints.length < 2) return
+
+    // Create polyline path from waypoints
+    const path = waypoints.map(wp => ({ lat: wp.lat, lng: wp.lng }))
+
+    // Draw blue polyline connecting waypoints
+    const polyline = new google.maps.Polyline({
+      path,
+      geodesic: true,
+      strokeColor: '#2563eb', // blue-600
+      strokeOpacity: 0.8,
+      strokeWeight: 4,
+    })
+
+    polyline.setMap(map)
+
+    // Cleanup: remove polyline when component unmounts
+    return () => {
+      polyline.setMap(null)
+    }
+  }, [map, waypoints])
+
+  return null
 }
 
 /**
@@ -71,6 +105,9 @@ export default function RouteMap({ waypoints, height = '400px' }: RouteMapProps)
           gestureHandling="greedy"
           disableDefaultUI={false}
         >
+          {/* Draw polyline connecting waypoints */}
+          <RoutePolyline waypoints={waypoints} />
+
           {/* Render markers for each waypoint */}
           {waypoints.map((waypoint, index) => {
             // Use numbers for all markers on the map for clarity
