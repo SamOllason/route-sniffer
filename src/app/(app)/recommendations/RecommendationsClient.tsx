@@ -36,6 +36,7 @@ export default function RecommendationsClient() {
   const [location, setLocation] = useState('')
   const [recommendations, setRecommendations] = useState<WalkRecommendation[]>([])
   const [customRoute, setCustomRoute] = useState<RouteRecommendation | null>(null)
+  const [lastFormData, setLastFormData] = useState<CustomRouteFormData | null>(null)
   const [isPending, startTransition] = useTransition()
 
   function handleSubmit(e: React.FormEvent) {
@@ -61,6 +62,9 @@ export default function RecommendationsClient() {
   }
 
   async function handleCustomRouteSubmit(data: CustomRouteFormData) {
+    // Store the form data for "Show Me Another" functionality
+    setLastFormData(data)
+    
     startTransition(async () => {
       try {
         const route = await generateCustomRouteAction(data.location, {
@@ -78,6 +82,13 @@ export default function RecommendationsClient() {
         setCustomRoute(null)
       }
     })
+  }
+
+  function handleShowMeAnother() {
+    if (!lastFormData) return
+    
+    // Re-submit with same data - AI will generate a different route
+    handleCustomRouteSubmit(lastFormData)
   }
 
   return (
@@ -246,12 +257,16 @@ export default function RecommendationsClient() {
             <div className="mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Route Map</h3>
               
-              <RouteMap waypoints={customRoute.waypoints} height="500px" />
+              <RouteMap 
+                waypoints={customRoute.waypoints} 
+                directions={customRoute.directions}
+                height="500px" 
+              />
             </div>
 
             {/* Turn-by-Turn Directions */}
             {customRoute.directions && customRoute.directions.steps.length > 0 && (
-              <div>
+              <div className="mb-6">
                 <h3 className="font-semibold text-gray-900 mb-3">Turn-by-Turn Directions</h3>
                 <div className="space-y-2 text-sm">
                   {customRoute.directions.steps.map((step, index) => (
@@ -267,7 +282,19 @@ export default function RecommendationsClient() {
               </div>
             )}
 
-            {/* TODO: Add "Save as Walk" button here */}
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <button
+                onClick={handleShowMeAnother}
+                disabled={isPending}
+                className="flex-1 rounded-lg bg-white border-2 border-blue-600 px-6 py-3 font-semibold text-blue-600 
+                  hover:bg-blue-50 disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed
+                  focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+              >
+                {isPending ? 'Generating...' : '🔄 Show Me Another'}
+              </button>
+              {/* TODO: Add "Save as Walk" button here */}
+            </div>
           </div>
         </div>
       )}

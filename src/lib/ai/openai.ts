@@ -357,7 +357,7 @@ IMPORTANT: Set category field for each POI:
         content: prompt,
       },
     ],
-    temperature: 0.7,
+    temperature: 0.9, // Higher temperature for more varied route suggestions
     max_tokens: 1000,
   })
 

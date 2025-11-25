@@ -2,34 +2,49 @@
 
 import { APIProvider, Map, Marker, useMap } from '@vis.gl/react-google-maps'
 import { useEffect } from 'react'
-import type { Waypoint } from '@/types/maps'
+import type { Waypoint, DirectionsResult } from '@/types/maps'
 
 interface RouteMapProps {
   waypoints: Waypoint[]
+  directions?: DirectionsResult // Optional: actual route polyline from Directions API
   height?: string
 }
 
 /**
  * Component to draw polyline on the map
- * Must be inside the Map component to access the map instance
+ * Uses the encoded polyline from Google Directions API for accurate walking routes
  */
-function RoutePolyline({ waypoints }: { waypoints: Waypoint[] }) {
+function RoutePolyline({ directions, waypoints }: { directions?: DirectionsResult; waypoints: Waypoint[] }) {
   const map = useMap()
 
   useEffect(() => {
     if (!map || waypoints.length < 2) return
 
-    // Create polyline path from waypoints
-    const path = waypoints.map(wp => ({ lat: wp.lat, lng: wp.lng }))
+    let polyline: google.maps.Polyline
 
-    // Draw blue polyline connecting waypoints
-    const polyline = new google.maps.Polyline({
-      path,
-      geodesic: true,
-      strokeColor: '#2563eb', // blue-600
-      strokeOpacity: 0.8,
-      strokeWeight: 4,
-    })
+    if (directions?.overviewPolyline) {
+      // Use the actual walking route polyline from Directions API
+      const decodedPath = google.maps.geometry.encoding.decodePath(directions.overviewPolyline)
+      
+      polyline = new google.maps.Polyline({
+        path: decodedPath,
+        geodesic: true,
+        strokeColor: '#2563eb', // blue-600
+        strokeOpacity: 0.8,
+        strokeWeight: 4,
+      })
+    } else {
+      // Fallback: Draw straight lines between waypoints if no directions available
+      const path = waypoints.map(wp => ({ lat: wp.lat, lng: wp.lng }))
+      
+      polyline = new google.maps.Polyline({
+        path,
+        geodesic: true,
+        strokeColor: '#2563eb', // blue-600
+        strokeOpacity: 0.8,
+        strokeWeight: 4,
+      })
+    }
 
     polyline.setMap(map)
 
@@ -37,7 +52,7 @@ function RoutePolyline({ waypoints }: { waypoints: Waypoint[] }) {
     return () => {
       polyline.setMap(null)
     }
-  }, [map, waypoints])
+  }, [map, directions, waypoints])
 
   return null
 }
@@ -46,18 +61,16 @@ function RoutePolyline({ waypoints }: { waypoints: Waypoint[] }) {
  * RouteMap component displays a Google Map with waypoints and route polyline
  * 
  * Features:
- * - Displays route as a blue polyline connecting all waypoints
- * - Shows markers for start, POI, and end points
+ * - Displays actual walking route from Google Directions API (not straight lines!)
+ * - Shows numbered markers for waypoints
  * - Auto-centers and zooms to fit all waypoints
  * - Responsive design matching app design system
  * 
- * Note: Using custom polyline drawing since @vis.gl/react-google-maps doesn't export Polyline
- * The library uses Google Maps Platform's DirectionsRenderer for routes
- * 
  * @param waypoints - Array of waypoint objects with lat, lng, name, and type
+ * @param directions - Optional DirectionsResult with encoded polyline for actual walking route
  * @param height - Optional custom height (defaults to 400px)
  */
-export default function RouteMap({ waypoints, height = '400px' }: RouteMapProps) {
+export default function RouteMap({ waypoints, directions, height = '400px' }: RouteMapProps) {
   // Validate API key
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
@@ -105,8 +118,8 @@ export default function RouteMap({ waypoints, height = '400px' }: RouteMapProps)
           gestureHandling="greedy"
           disableDefaultUI={false}
         >
-          {/* Draw polyline connecting waypoints */}
-          <RoutePolyline waypoints={waypoints} />
+          {/* Draw polyline connecting waypoints using actual walking route */}
+          <RoutePolyline directions={directions} waypoints={waypoints} />
 
           {/* Render markers for each waypoint */}
           {waypoints.map((waypoint, index) => {
