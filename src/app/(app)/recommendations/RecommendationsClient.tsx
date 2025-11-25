@@ -10,6 +10,27 @@ import toast from 'react-hot-toast'
 
 type Mode = 'basic' | 'custom'
 
+/**
+ * Helper function to get emoji icon for a waypoint based on its type/category
+ */
+function getWaypointEmoji(waypoint: RouteRecommendation['waypoints'][0]): string {
+  if (waypoint.type === 'start' || waypoint.type === 'end') {
+    return '🏁'
+  }
+  
+  switch (waypoint.category) {
+    case 'cafe':
+      return '☕'
+    case 'park':
+    case 'dog_park':
+      return '🌳'
+    case 'water':
+      return '💧'
+    default:
+      return '📍'
+  }
+}
+
 export default function RecommendationsClient() {
   const [mode, setMode] = useState<Mode>('basic')
   const [location, setLocation] = useState('')
@@ -212,7 +233,10 @@ export default function RecommendationsClient() {
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-600">
                       {index + 1}
                     </span>
-                    <span className="text-gray-700">{waypoint.name}</span>
+                    <span className="text-gray-700 flex items-center gap-2">
+                      <span className="text-base">{getWaypointEmoji(waypoint)}</span>
+                      {waypoint.name}
+                    </span>
                   </li>
                 ))}
               </ol>
@@ -221,22 +245,6 @@ export default function RecommendationsClient() {
             {/* Map Display */}
             <div className="mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Route Map</h3>
-              
-              {/* Map Legend */}
-              <div className="mb-3 flex flex-wrap gap-3 text-sm text-gray-600">
-                <span className="flex items-center gap-1">
-                  <span className="text-base">🏁</span> Start/End
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="text-base">☕</span> Cafe
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="text-base">🌳</span> Park
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="text-base">💧</span> Water
-                </span>
-              </div>
               
               <RouteMap waypoints={customRoute.waypoints} height="500px" />
             </div>

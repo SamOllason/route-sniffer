@@ -115,16 +115,16 @@ describe('RouteMap', () => {
       })
     })
 
-    it('displays marker labels (emoji for start/end, coffee for cafes, numbers for others)', () => {
+    it('displays numbered marker labels for all waypoints', () => {
       render(<RouteMap waypoints={mockWaypoints} />)
       
       const markers = screen.getAllByTestId('map-marker')
       
-      // First waypoint (type: 'start') should have flag emoji
-      expect(markers[0].getAttribute('data-label')).toBe('🏁')
-      
-      // Last waypoint (type: 'end') should have flag emoji  
-      expect(markers[3].getAttribute('data-label')).toBe('🏁')
+      // All markers should have numbered labels (1, 2, 3, 4)
+      expect(markers[0].getAttribute('data-label')).toBe('1')
+      expect(markers[1].getAttribute('data-label')).toBe('2')
+      expect(markers[2].getAttribute('data-label')).toBe('3')
+      expect(markers[3].getAttribute('data-label')).toBe('4')
       
       // Middle waypoints (type: 'poi') should have numbers
       expect(markers[1].getAttribute('data-label')).toBe('2')
@@ -239,23 +239,18 @@ describe('RouteMap', () => {
   })
 
   describe('Waypoint Types', () => {
-    it('differentiates start marker visually', () => {
+    it('uses sequential numbers for all waypoints on map', () => {
       render(<RouteMap waypoints={mockWaypoints} />)
       
       const markers = screen.getAllByTestId('map-marker')
-      // First marker should have flag emoji for start
-      expect(markers[0].getAttribute('data-label')).toBe('🏁')
+      // All markers numbered sequentially
+      expect(markers[0].getAttribute('data-label')).toBe('1')
+      expect(markers[1].getAttribute('data-label')).toBe('2')
+      expect(markers[2].getAttribute('data-label')).toBe('3')
+      expect(markers[3].getAttribute('data-label')).toBe('4')
     })
 
-    it('differentiates end marker visually', () => {
-      render(<RouteMap waypoints={mockWaypoints} />)
-      
-      const markers = screen.getAllByTestId('map-marker')
-      // Last marker should have flag emoji for end
-      expect(markers[3].getAttribute('data-label')).toBe('🏁')
-    })
-
-    it('shows coffee emoji for cafe waypoints', () => {
+    it('shows numbered markers for cafe waypoints', () => {
       const waypointsWithCafe: Waypoint[] = [
         { lat: 51.3478, lng: -2.2514, name: 'Start', type: 'start' },
         { lat: 51.3495, lng: -2.2540, name: 'Dog-Friendly Cafe', type: 'poi', category: 'cafe' },
@@ -265,11 +260,11 @@ describe('RouteMap', () => {
       render(<RouteMap waypoints={waypointsWithCafe} />)
       
       const markers = screen.getAllByTestId('map-marker')
-      // Cafe marker should have coffee cup emoji
-      expect(markers[1].getAttribute('data-label')).toBe('☕')
+      // Cafe marker should have number 2
+      expect(markers[1].getAttribute('data-label')).toBe('2')
     })
 
-    it('shows tree emoji for park waypoints', () => {
+    it('shows numbered markers for park waypoints', () => {
       const waypointsWithPark: Waypoint[] = [
         { lat: 51.3478, lng: -2.2514, name: 'Start', type: 'start' },
         { lat: 51.3495, lng: -2.2540, name: 'Local Park', type: 'poi', category: 'park' },
@@ -279,8 +274,8 @@ describe('RouteMap', () => {
       render(<RouteMap waypoints={waypointsWithPark} />)
       
       const markers = screen.getAllByTestId('map-marker')
-      // Park marker should have tree emoji
-      expect(markers[1].getAttribute('data-label')).toBe('🌳')
+      // Park marker should have number 2
+      expect(markers[1].getAttribute('data-label')).toBe('2')
     })
 
     it('shows POI markers for intermediate waypoints', () => {
