@@ -221,7 +221,7 @@ export default function RecommendationsClient() {
             {/* Map Display */}
             <div className="mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Route Map</h3>
-              <RouteMap route={customRoute} />
+              <RouteMap waypoints={customRoute.waypoints} height="500px" />
             </div>
 
             {/* Turn-by-Turn Directions */}

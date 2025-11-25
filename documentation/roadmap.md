@@ -178,18 +178,30 @@ Development plan for Woof Woof Walkies - prioritized by learning value and emplo
 - Solution: Deploy to Vercel for testing (network issues don't occur in production)
 - Alternative: Add `OPENAI_MOCK_MODE=true` to `.env.local` for offline development
 
-- [ ] **Step 9: Visual Map Display**
-  - [ ] Install Google Maps React library (`@vis.gl/react-google-maps`)
-  - [ ] Create `src/components/RouteMap.tsx` 
-  - [ ] Display route polyline on Google Map
-  - [ ] Show waypoint markers (start, POIs, end)
-  - [ ] Integrate map into custom route results display
+- [x] **Step 9: Visual Map Display**
+  - [x] Install Google Maps React library (`@vis.gl/react-google-maps`)
+  - [x] Create `src/components/RouteMap.tsx` following TDD approach
+    - [x] Write comprehensive test suite (21 tests)
+    - [x] Implement component to pass all tests
+  - [x] Display map with waypoint markers (S for start, E for end, numbered POIs)
+  - [x] Auto-center and zoom to fit all waypoints
+  - [x] Responsive design with customizable height
+  - [x] Integrate map into custom route results display
+  - [x] Accessibility features (ARIA labels, semantic HTML)
 
-- [ ] **Step 10: Deploy & Test**
-  - [ ] Deploy to Vercel
+**Google Maps Setup Notes:**
+- Requires `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` in Vercel environment variables (for client-side map)
+- Also requires `GOOGLE_MAPS_API_KEY` (without NEXT_PUBLIC_) for server-side geocoding
+- **Application restrictions:** Set to "None" (server-side calls from Vercel don't have HTTP referrers)
+- **API restrictions:** Keep enabled - restrict to: Geocoding API, Maps JavaScript API, Places API, Directions API
+- Changes take 1-5 minutes to propagate
+
+- [ ] **Step 10: Deploy & Test End-to-End**
+  - [ ] Verify custom route generation works on Vercel
   - [ ] Test with multiple locations (Bradford on Avon, London, etc.)
-  - [ ] Verify cost stays low (~$0.04/route)
-  - [ ] Test map display with real routes
+  - [ ] Verify map displays correctly with waypoints
+  - [ ] Check API costs in Google Cloud Console (~$0.04/route expected)
+  - [ ] Test error handling (invalid locations, API failures)
 
 **Add Later (Cost Control & Polish):**
 - [ ] **"Save as Walk" Functionality**
