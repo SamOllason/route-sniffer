@@ -132,12 +132,13 @@ describe('RecommendationsClient - Save Walk Feature', () => {
         expect(screen.getByRole('button', { name: /save walk/i })).toBeInTheDocument()
       })
 
-      // Click save
+      // Click save (starts wiggle animation, then saves after 2s)
       await user.click(screen.getByRole('button', { name: /save walk/i }))
 
+      // Wait for wiggle (2s) + save to complete
       await waitFor(() => {
         expect(mockSaveGeneratedWalkAction).toHaveBeenCalledWith(mockRoute)
-      })
+      }, { timeout: 5000 })
     })
 
     it('shows success toast on successful save', async () => {
@@ -155,12 +156,12 @@ describe('RecommendationsClient - Save Walk Feature', () => {
         expect(screen.getByRole('button', { name: /save walk/i })).toBeInTheDocument()
       })
 
-      // Click save
+      // Click save (wiggles for 2s, then saves)
       await user.click(screen.getByRole('button', { name: /save walk/i }))
 
       await waitFor(() => {
         expect(mockToastSuccess).toHaveBeenCalledWith(expect.stringContaining('saved'))
-      })
+      }, { timeout: 5000 })
     })
 
     it('shows error toast on save failure', async () => {
@@ -181,9 +182,10 @@ describe('RecommendationsClient - Save Walk Feature', () => {
       // Click save
       await user.click(screen.getByRole('button', { name: /save walk/i }))
 
+      // Wait for wiggle animation (2s) plus save action time
       await waitFor(() => {
         expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('error'))
-      })
+      }, { timeout: 5000 })
     })
 
     it('disables Save Walk button after successful save to prevent duplicates', async () => {
@@ -201,20 +203,18 @@ describe('RecommendationsClient - Save Walk Feature', () => {
         expect(screen.getByRole('button', { name: /save walk/i })).toBeInTheDocument()
       })
 
-      // Click save
+      // Click save (starts wiggle, then saves after 2s)
       await user.click(screen.getByRole('button', { name: /save walk/i }))
 
+      // Wait for wiggle + save to complete
       await waitFor(() => {
         expect(screen.getByRole('button', { name: /saved/i })).toBeDisabled()
-      })
+      }, { timeout: 5000 })
     })
 
     it('shows loading state while saving', async () => {
       const user = userEvent.setup()
-      // Delay the response to see loading state
-      mockSaveGeneratedWalkAction.mockImplementation(
-        () => new Promise((resolve) => setTimeout(() => resolve({ id: 'walk-123' }), 100))
-      )
+      mockSaveGeneratedWalkAction.mockResolvedValue({ id: 'walk-123' })
 
       render(<RecommendationsClient />)
 
@@ -227,11 +227,11 @@ describe('RecommendationsClient - Save Walk Feature', () => {
         expect(screen.getByRole('button', { name: /save walk/i })).toBeInTheDocument()
       })
 
-      // Click save
+      // Click save - shows wiggle state first (the new loading indicator)
       await user.click(screen.getByRole('button', { name: /save walk/i }))
 
-      // Should show loading state
-      expect(screen.getByRole('button', { name: /saving/i })).toBeDisabled()
+      // During wiggle animation, button shows wiggle text and is disabled
+      expect(screen.getByRole('button', { name: /wiggle/i })).toBeDisabled()
     })
 
     it('re-enables Save Walk button when a new route is generated', async () => {
@@ -249,12 +249,13 @@ describe('RecommendationsClient - Save Walk Feature', () => {
         expect(screen.getByRole('button', { name: /save walk/i })).toBeInTheDocument()
       })
 
-      // Save it
+      // Save it (starts wiggle, then saves)
       await user.click(screen.getByRole('button', { name: /save walk/i }))
 
+      // Wait for wiggle + save to complete
       await waitFor(() => {
         expect(screen.getByRole('button', { name: /saved/i })).toBeDisabled()
-      })
+      }, { timeout: 5000 })
 
       // Generate another route (Show Me Another)
       mockGenerateCustomRouteAction.mockResolvedValue({
@@ -297,9 +298,10 @@ describe('RecommendationsClient - Save Walk Feature', () => {
 
       await user.keyboard('{Enter}')
 
+      // Wait for wiggle (2s) + save to execute
       await waitFor(() => {
         expect(mockSaveGeneratedWalkAction).toHaveBeenCalled()
-      })
+      }, { timeout: 5000 })
     })
   })
 })

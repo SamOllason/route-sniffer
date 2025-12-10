@@ -40,7 +40,8 @@ export default function RecommendationsClient() {
   const [isPending, startTransition] = useTransition()
   const [isSaving, setIsSaving] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
-  const [showHappyDog, setShowHappyDog] = useState(false)
+  const [showEmojiRain, setShowEmojiRain] = useState(false)
+  const [isWiggling, setIsWiggling] = useState(false)
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -98,24 +99,33 @@ export default function RecommendationsClient() {
 
   /**
    * Save the current AI-generated route as a walk in the database
+   * Easter egg: Button wiggles like a happy dog, then emoji rain! 🐕
    */
   async function handleSaveWalk() {
-    if (!customRoute || isSaving || isSaved) return
+    if (!customRoute || isSaving || isSaved || isWiggling) return
 
-    setIsSaving(true)
-    try {
-      await saveGeneratedWalkAction(customRoute)
-      setIsSaved(true)
-      // Show the happy dog easter egg! 🐕
-      setShowHappyDog(true)
-      setTimeout(() => setShowHappyDog(false), 3000) // Hide after 3 seconds
-      toast.success('Walk saved successfully!')
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to save walk'
-      toast.error(message)
-    } finally {
-      setIsSaving(false)
-    }
+    // Start the wiggle animation (like an excited dog!)
+    setIsWiggling(true)
+    
+    // Wait for wiggle to complete (2 seconds), then save
+    setTimeout(async () => {
+      setIsWiggling(false)
+      setIsSaving(true)
+      
+      try {
+        await saveGeneratedWalkAction(customRoute)
+        setIsSaved(true)
+        // Trigger emoji rain celebration! 🎉
+        setShowEmojiRain(true)
+        setTimeout(() => setShowEmojiRain(false), 3000)
+        toast.success('Walk saved successfully!')
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Failed to save walk'
+        toast.error(message)
+      } finally {
+        setIsSaving(false)
+      }
+    }, 2000)
   }
 
   return (
@@ -302,12 +312,13 @@ export default function RecommendationsClient() {
               </button>
               <button
                 onClick={handleSaveWalk}
-                disabled={isSaving || isSaved}
-                className="flex-1 rounded-lg bg-blue-600 px-4 sm:px-6 py-3 font-semibold text-white 
+                disabled={isSaving || isSaved || isWiggling}
+                className={`flex-1 rounded-lg bg-blue-600 px-4 sm:px-6 py-3 font-semibold text-white 
                   hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed
-                  focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+                  focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition
+                  ${isWiggling ? 'animate-wiggle' : ''}`}
               >
-                {isSaving ? '💾 Saving...' : isSaved ? '✅ Saved!' : '💾 Save Walk'}
+                {isWiggling ? '🐕 Wiggle wiggle...' : isSaving ? '💾 Saving...' : isSaved ? '✅ Saved!' : '💾 Save Walk'}
               </button>
             </div>
 
@@ -355,25 +366,26 @@ export default function RecommendationsClient() {
         </div>
       )}
 
-      {/* 🐕 Happy Dog Easter Egg - shows when walk is saved! */}
-      {showHappyDog && (
+      {/* 🎉 Emoji Rain Easter Egg - shows when walk is saved! */}
+      {showEmojiRain && (
         <div 
-          className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none"
+          className="fixed inset-0 z-50 pointer-events-none overflow-hidden"
           aria-hidden="true"
         >
-          <div className="animate-bounce">
-            <div className="relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src="/happy-springer.svg" 
-                alt="Happy springer spaniel" 
-                className="w-48 h-48 sm:w-64 sm:h-64 drop-shadow-lg"
-              />
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-lg text-lg font-semibold text-gray-800 whitespace-nowrap">
-                Woof! Walk saved! 🎉
-              </div>
-            </div>
-          </div>
+          {/* Generate falling emojis */}
+          {[...Array(30)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute text-3xl sm:text-4xl animate-fall"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${2 + Math.random() * 2}s`,
+              }}
+            >
+              {['🐕', '🐾', '🦴', '❤️', '🎉'][Math.floor(Math.random() * 5)]}
+            </span>
+          ))}
         </div>
       )}
     </div>
