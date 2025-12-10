@@ -40,6 +40,7 @@ export default function RecommendationsClient() {
   const [isPending, startTransition] = useTransition()
   const [isSaving, setIsSaving] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
+  const [showHappyDog, setShowHappyDog] = useState(false)
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -105,6 +106,9 @@ export default function RecommendationsClient() {
     try {
       await saveGeneratedWalkAction(customRoute)
       setIsSaved(true)
+      // Show the happy dog easter egg! 🐕
+      setShowHappyDog(true)
+      setTimeout(() => setShowHappyDog(false), 3000) // Hide after 3 seconds
       toast.success('Walk saved successfully!')
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to save walk'
@@ -348,6 +352,28 @@ export default function RecommendationsClient() {
               ? 'Enter a location above to get AI-powered walk recommendations!' 
               : 'Fill in the form above to generate a custom walking route!'}
           </p>
+        </div>
+      )}
+
+      {/* 🐕 Happy Dog Easter Egg - shows when walk is saved! */}
+      {showHappyDog && (
+        <div 
+          className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none"
+          aria-hidden="true"
+        >
+          <div className="animate-bounce">
+            <div className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="/happy-springer.svg" 
+                alt="Happy springer spaniel" 
+                className="w-48 h-48 sm:w-64 sm:h-64 drop-shadow-lg"
+              />
+              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-lg text-lg font-semibold text-gray-800 whitespace-nowrap">
+                Woof! Walk saved! 🎉
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
