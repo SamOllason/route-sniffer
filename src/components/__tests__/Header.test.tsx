@@ -14,7 +14,7 @@ describe('Header', () => {
 
   it('renders the brand title', () => {
     renderHeader()
-    expect(screen.getByRole('link', { name: /woof woof walkies/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /route sniffer/i })).toBeInTheDocument()
   })
 
   it('renders navigation links', () => {

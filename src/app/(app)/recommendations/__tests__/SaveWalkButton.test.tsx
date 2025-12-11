@@ -6,6 +6,7 @@ import type { RouteRecommendation } from '@/types/maps'
 
 // Mock the actions
 const mockSaveGeneratedWalkAction = vi.fn()
+const mockSaveBasicRecommendationAction = vi.fn()
 const mockGenerateCustomRouteAction = vi.fn()
 const mockGetRecommendationsAction = vi.fn()
 
@@ -13,6 +14,7 @@ vi.mock('../actions', () => ({
   getRecommendationsAction: (...args: any[]) => mockGetRecommendationsAction(...args),
   generateCustomRouteAction: (...args: any[]) => mockGenerateCustomRouteAction(...args),
   saveGeneratedWalkAction: (...args: any[]) => mockSaveGeneratedWalkAction(...args),
+  saveBasicRecommendationAction: (...args: any[]) => mockSaveBasicRecommendationAction(...args),
 }))
 
 // Mock react-hot-toast
@@ -89,7 +91,7 @@ describe('RecommendationsClient - Save Walk Feature', () => {
       expect(screen.queryByRole('button', { name: /save walk/i })).not.toBeInTheDocument()
     })
 
-    it('does not render "Save Walk" button in basic recommendations mode', async () => {
+    it('renders "Save Walk" button in basic recommendations mode', async () => {
       const user = userEvent.setup()
       mockGetRecommendationsAction.mockResolvedValue([
         { name: 'Test Walk', distance: '2km', difficulty: 'easy', highlights: 'Nice', reason: 'Good' },
@@ -102,12 +104,11 @@ describe('RecommendationsClient - Save Walk Feature', () => {
       await user.type(input, 'London')
       await user.click(screen.getByRole('button', { name: /get recommendations/i }))
 
+      // Wait for recommendation AND save button to appear
       await waitFor(() => {
         expect(screen.getByText('Test Walk')).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /save walk/i })).toBeInTheDocument()
       })
-
-      // Should not have save button for basic recommendations
-      expect(screen.queryByRole('button', { name: /save walk/i })).not.toBeInTheDocument()
     })
   })
 

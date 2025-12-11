@@ -1,6 +1,6 @@
 # What I've Learned
 
-A running log of concepts, patterns, and technologies learned while building Woof Woof Walkies.
+A running log of concepts, patterns, and technologies learned while building Route Sniffer.
 
 ---
 

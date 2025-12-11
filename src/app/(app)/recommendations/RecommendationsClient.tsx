@@ -302,7 +302,7 @@ export default function RecommendationsClient() {
                       focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition
                       ${isThisWiggling ? 'animate-wiggle' : ''}`}
                   >
-                    {isThisWiggling ? '🐕 Wiggle wiggle...' : isThisSaving ? '💾 Saving...' : isThisSaved ? '✅ Saved!' : '💾 Save Walk'}
+                    {isThisWiggling ? '🐶 {wag wag wiggle wiggle}...' : isThisSaving ? '💾 Saving...' : isThisSaved ? '✅ Saved!' : '💾 Save Walk'}
                   </button>
                 </div>
               </div>

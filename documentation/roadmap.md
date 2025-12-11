@@ -1,6 +1,6 @@
 # Project Roadmap
 
-Development plan for Woof Woof Walkies - prioritized by learning value and employability skills.
+Development plan for Route Sniffer - prioritized by learning value and employability skills.
 
 ---
 

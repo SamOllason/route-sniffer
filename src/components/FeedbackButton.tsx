@@ -92,7 +92,7 @@ export default function FeedbackButton() {
             </div>
 
             <p className="text-gray-600 mb-4">
-              Thanks for testing Woof Woof Walkies! Your feedback helps make it better.
+              Thanks for testing Route Sniffer! Your feedback helps make it better.
             </p>
 
             <form onSubmit={handleSubmit}>

@@ -47,7 +47,7 @@ The competitive advantage is being AI-first while remaining dog-focused and cost
 
 ## 🎯 Research Goal
 
-Understand the competitive landscape for dog walking apps, identify AI features in existing products, and find differentiation opportunities for Woof Woof Walkies.
+Understand the competitive landscape for dog walking apps, identify AI features in existing products, and find differentiation opportunities for Route Sniffer.
 
 ---
 
@@ -201,7 +201,7 @@ Understand the competitive landscape for dog walking apps, identify AI features 
 
 ---
 
-## 🎯 Differentiation Strategy for Woof Woof Walkies
+## 🎯 Differentiation Strategy for Route Sniffer
 
 ### 1. **AI-First Approach**
 **What competitors do:** Manual search, basic filters, popularity-based recommendations  
@@ -314,7 +314,7 @@ Why recommended:
         High Tech/AI
              ↑
              |
-    [Woof Woof Walkies] ← YOU ARE HERE
+    [Route Sniffer] ← YOU ARE HERE
              |
              |
 Low Cost ----+---- High Cost

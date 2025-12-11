@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Woof Woof Walkies',
+  title: 'Route Sniffer',
   description: 'Plan, log, and revisit your favorite dog walks.',
 }
 

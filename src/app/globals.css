@@ -58,3 +58,18 @@ body {
 .animate-fall {
   animation: fall 3s ease-in forwards;
 }
+
+/* ♿ Accessibility: Respect user's motion preferences
+ * Users with vestibular disorders may experience discomfort with animations.
+ * This disables wiggle and falling animations for users who prefer reduced motion.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .animate-wiggle {
+    animation: none;
+  }
+  
+  .animate-fall {
+    animation: none;
+    opacity: 0; /* Hide falling emojis entirely */
+  }
+}

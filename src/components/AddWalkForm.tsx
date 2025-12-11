@@ -18,6 +18,10 @@ export default function AddWalkForm({ onSubmit, isSubmitting = false }: AddWalkF
   })
 
   const [errors, setErrors] = useState<Partial<Record<keyof CreateWalkInput, string>>>({})
+  
+  // Easter egg state: wiggle animation and emoji rain! 🐕
+  const [isWiggling, setIsWiggling] = useState(false)
+  const [showEmojiRain, setShowEmojiRain] = useState(false)
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof CreateWalkInput, string>> = {}
@@ -45,7 +49,22 @@ export default function AddWalkForm({ onSubmit, isSubmitting = false }: AddWalkF
       return
     }
 
-    await onSubmit(formData)
+    // Start the wiggle animation (like an excited dog!)
+    setIsWiggling(true)
+    
+    // Wait for wiggle to complete (2 seconds), then save
+    setTimeout(async () => {
+      setIsWiggling(false)
+      
+      try {
+        await onSubmit(formData)
+        // Trigger emoji rain celebration! 🎉
+        setShowEmojiRain(true)
+        setTimeout(() => setShowEmojiRain(false), 3000)
+      } catch {
+        // Error handling is done by parent component
+      }
+    }, 2000)
   }
 
   const handleChange = (
@@ -178,12 +197,36 @@ export default function AddWalkForm({ onSubmit, isSubmitting = false }: AddWalkF
       <div>
         <button
           type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          disabled={isSubmitting || isWiggling}
+          className={`w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors
+            ${isWiggling ? 'animate-wiggle' : ''}`}
         >
-          {isSubmitting ? 'Saving...' : 'Save Walk'}
+          {isWiggling ? '🐶 {wag wag wiggle wiggle}...' : isSubmitting ? 'Saving...' : 'Save Walk'}
         </button>
       </div>
+      
+      {/* 🎉 Emoji Rain Easter Egg - shows when walk is saved! */}
+      {showEmojiRain && (
+        <div 
+          className="fixed inset-0 z-50 pointer-events-none overflow-hidden"
+          aria-hidden="true"
+        >
+          {/* Generate falling emojis */}
+          {[...Array(30)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute text-3xl sm:text-4xl animate-fall"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${2 + Math.random() * 2}s`,
+              }}
+            >
+              {['🐕', '🐾', '🦴', '❤️', '🎉'][Math.floor(Math.random() * 5)]}
+            </span>
+          ))}
+        </div>
+      )}
     </form>
   )
 }

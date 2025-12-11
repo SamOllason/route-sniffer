@@ -191,7 +191,7 @@ describe('AddWalkForm', () => {
       // Submit
       await user.click(screen.getByRole('button', { name: /save walk/i }))
 
-      // Check onSubmit was called with correct data
+      // Check onSubmit was called with correct data (wait for 2s wiggle animation)
       await waitFor(() => {
         expect(mockSubmit).toHaveBeenCalledWith({
           name: 'Riverside Loop',
@@ -200,7 +200,7 @@ describe('AddWalkForm', () => {
           difficulty: 'hard',
           notes: 'Beautiful scenery',
         })
-      })
+      }, { timeout: 5000 })
     })
 
     it('calls onSubmit without notes if notes field is empty', async () => {
@@ -217,6 +217,7 @@ describe('AddWalkForm', () => {
 
       await user.click(screen.getByRole('button', { name: /save walk/i }))
 
+      // Wait for 2s wiggle animation to complete before onSubmit is called
       await waitFor(() => {
         expect(mockSubmit).toHaveBeenCalledWith({
           name: 'Quick Walk',
@@ -225,7 +226,7 @@ describe('AddWalkForm', () => {
           difficulty: 'moderate',
           notes: '',
         })
-      })
+      }, { timeout: 5000 })
     })
   })
 

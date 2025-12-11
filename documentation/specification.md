@@ -2,7 +2,7 @@
 
 ## Project Overview
 <!-- Brief description of what the application does and its purpose -->
-**Project Name:** Woof woof walkies
+**Project Name:** Route Sniffer
 **Type:** Full stack React TypeScript Web Application.
 **Description:** [1-2 paragraphs describing the app]
 

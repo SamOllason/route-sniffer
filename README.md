@@ -1,4 +1,4 @@
-# 🐕 Woof Woof Walkies
+# 🐕 Route Sniffer
 
 > **AI-Powered Dog Walking Route Planner** - A production-ready full-stack application showcasing modern web development with intelligent route generation.
 

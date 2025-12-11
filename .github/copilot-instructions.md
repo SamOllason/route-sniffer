@@ -1,4 +1,4 @@
-# GitHub Copilot Instructions for Woof Woof Walkies
+# GitHub Copilot Instructions for Route Sniffer
 
 ## Project Context
 This is a **learning-focused portfolio project** for a senior software engineer returning to modern full-stack development with React, TypeScript, Next.js 15, and PostgreSQL (Supabase).
