@@ -1,14 +1,11 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { getRecommendationsAction, generateCustomRouteAction, saveGeneratedWalkAction, saveBasicRecommendationAction } from './actions'
-import { WalkRecommendation } from '@/lib/ai/openai'
+import { generateCustomRouteAction, saveGeneratedWalkAction } from './actions'
 import CustomRouteForm, { CustomRouteFormData } from '@/components/CustomRouteForm'
 import RouteMap from '@/components/RouteMap'
 import type { RouteRecommendation } from '@/types/maps'
 import toast from 'react-hot-toast'
-
-type Mode = 'basic' | 'custom'
 
 /**
  * Helper function to get emoji icon for a waypoint based on its type/category
@@ -32,9 +29,6 @@ function getWaypointEmoji(waypoint: RouteRecommendation['waypoints'][0]): string
 }
 
 export default function RecommendationsClient() {
-  const [mode, setMode] = useState<Mode>('basic')
-  const [location, setLocation] = useState('')
-  const [recommendations, setRecommendations] = useState<WalkRecommendation[]>([])
   const [customRoute, setCustomRoute] = useState<RouteRecommendation | null>(null)
   const [lastFormData, setLastFormData] = useState<CustomRouteFormData | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -42,35 +36,6 @@ export default function RecommendationsClient() {
   const [isSaved, setIsSaved] = useState(false)
   const [showEmojiRain, setShowEmojiRain] = useState(false)
   const [isWiggling, setIsWiggling] = useState(false)
-  
-  // State for basic recommendation saves - track by index which ones are saved/wiggling
-  const [basicSavingIndex, setBasicSavingIndex] = useState<number | null>(null)
-  const [basicSavedIndexes, setBasicSavedIndexes] = useState<Set<number>>(new Set())
-  const [basicWigglingIndex, setBasicWigglingIndex] = useState<number | null>(null)
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-
-    if (!location.trim()) {
-      toast.error('Please enter a location')
-      return
-    }
-
-    startTransition(async () => {
-      try {
-        const results = await getRecommendationsAction(location)
-        setRecommendations(results)
-        setCustomRoute(null) // Clear custom route when getting basic recommendations
-        // Reset saved state for new recommendations
-        setBasicSavedIndexes(new Set())
-        toast.success(`Found ${results.length} recommendations!`)
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Failed to get recommendations'
-        toast.error(message)
-        setRecommendations([])
-      }
-    })
-  }
 
   async function handleCustomRouteSubmit(data: CustomRouteFormData) {
     // Store the form data for "Show Me Another" functionality
@@ -87,7 +52,6 @@ export default function RecommendationsClient() {
           circular: data.circular,
         })
         setCustomRoute(route)
-        setRecommendations([]) // Clear basic recommendations when generating custom route
         toast.success('Custom route generated!')
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Failed to generate custom route'
@@ -135,184 +99,32 @@ export default function RecommendationsClient() {
     }, 2000)
   }
 
-  /**
-   * Save a basic AI recommendation as a walk in the database
-   * Easter egg: Button wiggles like a happy dog, then emoji rain! 🐕
-   */
-  async function handleSaveBasicRecommendation(recommendation: WalkRecommendation, index: number) {
-    if (basicSavedIndexes.has(index) || basicSavingIndex !== null || basicWigglingIndex !== null) return
-
-    // Start the wiggle animation (like an excited dog!)
-    setBasicWigglingIndex(index)
-    
-    // Wait for wiggle to complete (2 seconds), then save
-    setTimeout(async () => {
-      setBasicWigglingIndex(null)
-      setBasicSavingIndex(index)
-      
-      try {
-        await saveBasicRecommendationAction(recommendation, location)
-        setBasicSavedIndexes(prev => new Set(prev).add(index))
-        // Trigger emoji rain celebration! 🎉
-        setShowEmojiRain(true)
-        setTimeout(() => setShowEmojiRain(false), 3000)
-        toast.success('Walk saved successfully!')
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Failed to save walk'
-        toast.error(message)
-      } finally {
-        setBasicSavingIndex(null)
-      }
-    }, 2000)
-  }
-
   return (
     <div className="mx-auto max-w-4xl">
       <div className="mb-6 sm:mb-8">
         <h1 className="mb-2 text-2xl sm:text-3xl font-bold text-gray-900">
-          ✨ AI Walk Recommendations
+          ✨ Sniff Routes with AI!
         </h1>
         <p className="text-sm sm:text-base text-gray-600">
-          Get personalized dog walking route suggestions for any location
+          Generate personalized dog walking routes for any location
         </p>
       </div>
 
-      {/* Mode Toggle - stacks on very small screens */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-2 rounded-lg bg-gray-100 p-1">
-        <button
-          type="button"
-          onClick={() => setMode('basic')}
-          className={`flex-1 rounded-md px-3 sm:px-4 py-2 text-sm font-medium transition ${
-            mode === 'basic'
-              ? 'bg-white text-gray-900 shadow'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Basic Recommendations
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode('custom')}
-          className={`flex-1 rounded-md px-3 sm:px-4 py-2 text-sm font-medium transition ${
-            mode === 'custom'
-              ? 'bg-white text-gray-900 shadow'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          Custom Route Generator
-        </button>
-      </div>
-
-      {/* Basic Recommendations Form */}
-      {mode === 'basic' && (
-        <form onSubmit={handleSubmit} className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Enter a location (e.g., London, Hyde Park)"
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 
-                text-gray-900 placeholder:text-gray-500
-                focus:border-transparent focus:ring-2 focus:ring-blue-500"
-              disabled={isPending}
-            />
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full sm:w-auto rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white 
-                hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-            >
-              {isPending ? 'Finding...' : 'Get Recommendations'}
-            </button>
-          </div>
-        </form>
-      )}
-
       {/* Custom Route Form */}
-      {mode === 'custom' && (
-        <div className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
-          <CustomRouteForm onSubmit={handleCustomRouteSubmit} isLoading={isPending} />
-        </div>
-      )}
+      <div className="mb-6 sm:mb-8 rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
+        <CustomRouteForm onSubmit={handleCustomRouteSubmit} isLoading={isPending} />
+      </div>
 
       {/* Loading State */}
       {isPending && (
         <div className="text-center py-12">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-          <p className="mt-4 text-gray-600">
-            {mode === 'basic' ? 'Finding great walks near you...' : 'Generating your custom route...'}
-          </p>
-        </div>
-      )}
-
-      {/* Basic Recommendations Results */}
-      {!isPending && mode === 'basic' && recommendations.length > 0 && (
-        <div className="space-y-4 sm:space-y-6">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-            Recommended Walks for {location}
-          </h2>
-          
-          {recommendations.map((rec, index) => {
-            const isThisWiggling = basicWigglingIndex === index
-            const isThisSaving = basicSavingIndex === index
-            const isThisSaved = basicSavedIndexes.has(index)
-            const isAnyBusy = basicWigglingIndex !== null || basicSavingIndex !== null
-            
-            return (
-              <div
-                key={index}
-                className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow-sm"
-              >
-                <div className="mb-4">
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
-                    {rec.name}
-                  </h3>
-                  <div className="mt-1 flex flex-wrap gap-2 sm:gap-4 text-sm text-gray-600">
-                    <span>📏 {rec.distance}</span>
-                    <span>
-                      {rec.difficulty === 'easy' && '🟢'}
-                      {rec.difficulty === 'moderate' && '🟡'}
-                      {rec.difficulty === 'hard' && '🔴'}
-                      {' '}
-                      {rec.difficulty.charAt(0).toUpperCase() + rec.difficulty.slice(1)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div>
-                    <h4 className="mb-1 font-semibold text-gray-700">Highlights</h4>
-                    <p className="text-gray-600">{rec.highlights}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="mb-1 font-semibold text-gray-700">Why this route?</h4>
-                    <p className="text-gray-600">{rec.reason}</p>
-                  </div>
-                </div>
-
-                {/* Save Button with wiggle animation */}
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <button
-                    onClick={() => handleSaveBasicRecommendation(rec, index)}
-                    disabled={isThisSaving || isThisSaved || (isAnyBusy && !isThisWiggling)}
-                    className={`w-full sm:w-auto rounded-lg bg-blue-600 px-4 sm:px-6 py-2 font-semibold text-white 
-                      hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed
-                      focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition
-                      ${isThisWiggling ? 'animate-wiggle' : ''}`}
-                  >
-                    {isThisWiggling ? '🐶 {wag wag wiggle wiggle}...' : isThisSaving ? '💾 Saving...' : isThisSaved ? '✅ Saved!' : '💾 Save Walk'}
-                  </button>
-                </div>
-              </div>
-            )
-          })}
+          <p className="mt-4 text-gray-600">Generating your custom route...</p>
         </div>
       )}
 
       {/* Custom Route Results */}
-      {!isPending && mode === 'custom' && customRoute && (
+      {!isPending && customRoute && (
         <div className="space-y-4 sm:space-y-6">
           <div className="rounded-lg border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
             {/* Route Header */}
@@ -358,7 +170,7 @@ export default function RecommendationsClient() {
               </ol>
             </div>
 
-             {/* Action Buttons */}
+            {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
               <button
                 onClick={handleShowMeAnother}
@@ -377,14 +189,13 @@ export default function RecommendationsClient() {
                   focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition
                   ${isWiggling ? 'animate-wiggle' : ''}`}
               >
-                {isWiggling ? '🐕 Wiggle wiggle...' : isSaving ? '💾 Saving...' : isSaved ? '✅ Saved!' : '💾 Save Walk'}
+                {isWiggling ? '🐶 {wag wag wiggle wiggle}...' : isSaving ? '💾 Saving...' : isSaved ? '✅ Saved!' : '💾 Save Walk'}
               </button>
             </div>
 
             {/* Map Display */}
-            <div className="mb-4 sm:mb-6">
+            <div className="mt-6 mb-4 sm:mb-6">
               <h3 className="font-semibold text-gray-900 mb-3">Route Map</h3>
-              
               <RouteMap 
                 waypoints={customRoute.waypoints} 
                 directions={customRoute.directions}
@@ -409,19 +220,14 @@ export default function RecommendationsClient() {
                 </div>
               </div>
             )}
-
           </div>
         </div>
       )}
 
       {/* Empty State */}
-      {!isPending && recommendations.length === 0 && !customRoute && (
+      {!isPending && !customRoute && (
         <div className="text-center py-12 text-gray-500">
-          <p>
-            {mode === 'basic' 
-              ? 'Enter a location above to get AI-powered walk recommendations!' 
-              : 'Fill in the form above to generate a custom walking route!'}
-          </p>
+          <p>Fill in the form above to generate a custom walking route!</p>
         </div>
       )}
 

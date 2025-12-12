@@ -46,9 +46,10 @@ export async function middleware(request: NextRequest) {
   }
 
   // If user is logged in and trying to access login/signup
+  // Redirect to AI recommendations - the main feature we want users to experience!
   if (user && isPublicRoute) {
     const url = request.nextUrl.clone()
-    url.pathname = '/'
+    url.pathname = '/recommendations'
     return NextResponse.redirect(url)
   }
 

@@ -19,7 +19,8 @@ export default function SignupPage() {
       return { error: error.message }
     }
 
-    redirect('/')
+    // Redirect to AI recommendations - the main feature we want users to experience!
+    redirect('/recommendations')
   }
 
   return <SignupForm onSignup={signupAction} />
