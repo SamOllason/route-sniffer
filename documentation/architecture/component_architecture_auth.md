@@ -12,7 +12,7 @@ Visual guide for implementing Supabase authentication with protected routes.
 │                                                                     │
 │  Browser requests /                                                │
 │       ↓                                                             │
-│  Middleware checks auth                                            │
+│  Proxy checks auth                                                 │
 │       ↓                                                             │
 │  No session found                                                  │
 │       ↓                                                             │
@@ -70,7 +70,7 @@ Visual guide for implementing Supabase authentication with protected routes.
 │                                                                     │
 │  Browser requests / (again)                                        │
 │       ↓                                                             │
-│  Middleware checks auth                                            │
+│  Proxy checks auth                                                 │
 │       ↓                                                             │
 │  Session found! ✅                                                  │
 │       ↓                                                             │
@@ -160,7 +160,7 @@ Redirect to /login
 ```
 User requests /walks/new
       ↓
-Middleware runs (before page loads)
+Proxy runs (before page loads)
       ↓
 Check: supabase.auth.getUser()
       ↓
@@ -173,7 +173,7 @@ Page renders
 
 User requests /walks/new (no session)
       ↓
-Middleware runs
+Proxy runs
       ↓
 Check: supabase.auth.getUser()
       ↓
@@ -211,7 +211,7 @@ src/
 │       ├── LoginForm.test.tsx      🧪 NEW
 │       └── SignupForm.test.tsx     🧪 NEW
 │
-├── middleware.ts                   ⚙️ NEW - Protect routes
+├── proxy.ts                        ⚙️ NEW - Protect routes (Next.js 16 renamed middleware to proxy)
 │
 └── lib/
     └── supabase/
@@ -223,15 +223,15 @@ src/
 
 ## Component Breakdown
 
-### 1. Middleware (Route Protection)
+### 1. Proxy (Route Protection)
 
 ```tsx
-// middleware.ts (runs before every request)
+// proxy.ts (runs before every request - Next.js 16 renamed middleware to proxy)
 
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
-export async function middleware(request) {
+export async function proxy(request) {
   // Create Supabase client
   const supabase = createServerClient(...)
   
@@ -415,7 +415,7 @@ USING (auth.uid() = user_id);
 └─────────────────────────────────────────┘
               ↓
 ┌─────────────────────────────────────────┐
-│  SERVER (Next.js Middleware)            │
+│  SERVER (Next.js Proxy)                 │
 │                                         │
 │  Read cookie → Decode JWT → Get user_id │
 │                                         │
@@ -464,7 +464,7 @@ USING (auth.uid() = user_id);
 We'll build this in order:
 
 1. ✅ Create architecture diagram (done!)
-2. ⬜ Create middleware for route protection
+2. ✅ Create proxy for route protection (Next.js 16)
 3. ⬜ Build SignupForm component (TDD)
 4. ⬜ Build Signup page with Server Action
 5. ⬜ Build LoginForm component (TDD)
@@ -480,10 +480,11 @@ We'll build this in order:
 
 ## Key Concepts to Learn
 
-### 1. Middleware
-- Runs before every request
+### 1. Proxy (formerly Middleware)
+- Runs before every request at the edge
 - Can redirect based on conditions
 - Checks authentication
+- Next.js 16 renamed middleware.ts to proxy.ts
 
 ### 2. Server Actions with Auth
 - Get current user

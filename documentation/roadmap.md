@@ -7,7 +7,7 @@ Development plan for Route Sniffer - prioritized by learning value and employabi
 ## ✅ Completed Features
 
 ### Phase 0: Project Setup
-- [x] Next.js 15 project with TypeScript
+- [x] Next.js 16 project with TypeScript
 - [x] Tailwind CSS v4 configured
 - [x] Vitest testing infrastructure
 - [x] Supabase project created and connected
@@ -521,7 +521,7 @@ npx supabase migration new add_feature
 
 After completing Phases 3-7:
 
-**Project:** Full-stack dog walking tracker with AI-powered recommendations using Next.js 15, React Server Components, TypeScript, and Supabase.
+**Project:** Full-stack dog walking tracker with AI-powered recommendations using Next.js 16, React Server Components, TypeScript, and Supabase.
 
 **Technical highlights:**
 - Implemented secure authentication with Row-Level Security policies
@@ -531,10 +531,11 @@ After completing Phases 3-7:
 - Multi-API orchestration (OpenAI + Google Maps) with cost controls
 - Rate limiting and caching strategies to keep AI costs under $2/month
 - Prompt engineering for efficient token usage (5x cost reduction)
-- Test-driven development with Vitest and React Testing Library (130+ tests)
+- Test-driven development with Vitest and React Testing Library (199 tests)
 - Server-side rendering with React Server Components for optimal performance
 - Server Actions for type-safe client-server communication
 - Responsive design with Tailwind CSS
+- Next.js 16 Proxy for route protection (renamed from middleware)
 
 ---
 

@@ -1,13 +1,13 @@
 # Architecture & Technology Decisions
 
 ## Tech Stack Overview
-- **Frontend:** React 18+ with TypeScript (strict mode)
-- **Framework:** Next.js 15 (App Router) with Turbopack
+- **Frontend:** React 19 with TypeScript (strict mode)
+- **Framework:** Next.js 16 (App Router) with Turbopack
 - **Database:** PostgreSQL via Supabase
-- **Styling:** Tailwind CSS
+- **Styling:** Tailwind CSS v4
 - **Deployment:** Vercel
-- **Code Quality:** ESLint + Prettier
-- **Testing:** Vitest + React Testing Library (added after initial features)
+- **Code Quality:** ESLint
+- **Testing:** Vitest + React Testing Library (199 tests, TDD approach)
 
 ---
 
@@ -22,7 +22,7 @@
 - Server Components and App Router are current best practices
 - Simpler deployment story
 - Faster to iterate
-- Using Next.js 15 with Turbopack for cutting-edge dev experience
+- Using Next.js 16 with Turbopack for cutting-edge dev experience
 
 **Trade-offs:**
 - ❌ More vendor coupling (Next.js conventions)
@@ -107,19 +107,21 @@ Next.js App
 - Component composition patterns
 
 ### Forms & Validation
-**Decision:** TBD - React Hook Form + Zod (recommended)
-- Best validation DX
-- Type-safe schemas
+**Decision:** Native HTML form validation + Server Actions
+- Simple and effective for this project scope
+- Server-side validation in Server Actions
+- Could add Zod for complex validation in future
 
 ### Testing Strategy
-**Decision:** Add testing after initial features are built
+**Decision:** TDD with comprehensive test coverage
 - Vitest + React Testing Library
-- Start with feature development first
-- Add comprehensive tests once comfortable with stack
+- 199 tests covering components, actions, and utilities
+- Tests written before implementation
+- High coverage maintained throughout development
 
 ---
 
 ## Notes
-- Taking TDD approach where possible
+- TDD approach used throughout
 - Focus on modern patterns and best practices
-- Keeping scope simple for learning and portfolio
+- Next.js 16 with Proxy (renamed from Middleware) for route protection

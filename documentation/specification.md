@@ -53,7 +53,7 @@ This project demonstrates several advanced patterns and best practices that show
 
 
 ### 2. React Server Components Architecture
-**What it demonstrates:** Modern Next.js 15 patterns and understanding of client/server boundaries
+**What it demonstrates:** Modern Next.js 16 patterns and understanding of client/server boundaries
 
 The application properly separates Server Components (for data fetching) from Client Components (for interactivity), optimizing bundle size and performance.
 

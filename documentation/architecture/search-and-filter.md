@@ -1,7 +1,7 @@
 # Search & Filter Architecture
 
 ## Overview
-Server-side filtering system using Next.js 15 App Router with URL-based state management and dynamic Supabase query building.
+Server-side filtering system using Next.js 16 App Router with URL-based state management and dynamic Supabase query building.
 
 ## Component Flow
 
@@ -15,7 +15,7 @@ Server-side filtering system using Next.js 15 App Router with URL-based state ma
 ┌─────────────────────────────────────┐
 │   page.tsx (Server Component)        │
 │   - Accepts searchParams prop        │
-│   - Awaits params (Next.js 15 async) │
+│   - Awaits params (Next.js 16 async) │
 │   - Builds dynamic Supabase query    │
 │   - Fetches filtered data            │
 └─────────────────────────────────────┘
@@ -66,7 +66,7 @@ Server-side filtering system using Next.js 15 App Router with URL-based state ma
 ### 2. Server Component (page.tsx)
 
 **Responsibilities:**
-- Accept async `searchParams` prop (Next.js 15 pattern)
+- Accept async `searchParams` prop (Next.js 16 pattern)
 - Build dynamic Supabase query based on active filters
 - Execute query and fetch filtered data
 - Pass data to child components
