@@ -72,9 +72,6 @@ describe('RecommendationsClient - Save Walk Feature', () => {
 
       render(<RecommendationsClient />)
 
-      // Switch to custom mode
-      await user.click(screen.getByRole('button', { name: /custom route generator/i }))
-
       // Fill in location and submit
       const locationInput = screen.getByLabelText(/starting location/i)
       await user.type(locationInput, 'London')
@@ -90,26 +87,6 @@ describe('RecommendationsClient - Save Walk Feature', () => {
 
       expect(screen.queryByRole('button', { name: /save walk/i })).not.toBeInTheDocument()
     })
-
-    it('renders "Save Walk" button in basic recommendations mode', async () => {
-      const user = userEvent.setup()
-      mockGetRecommendationsAction.mockResolvedValue([
-        { name: 'Test Walk', distance: '2km', difficulty: 'easy', highlights: 'Nice', reason: 'Good' },
-      ])
-
-      render(<RecommendationsClient />)
-
-      // Submit basic recommendation
-      const input = screen.getByPlaceholderText(/enter a location/i)
-      await user.type(input, 'London')
-      await user.click(screen.getByRole('button', { name: /get recommendations/i }))
-
-      // Wait for recommendation AND save button to appear
-      await waitFor(() => {
-        expect(screen.getByText('Test Walk')).toBeInTheDocument()
-        expect(screen.getByRole('button', { name: /save walk/i })).toBeInTheDocument()
-      })
-    })
   })
 
   describe('Save Walk User Interactions', () => {
@@ -124,7 +101,6 @@ describe('RecommendationsClient - Save Walk Feature', () => {
       render(<RecommendationsClient />)
 
       // Generate a route first
-      await user.click(screen.getByRole('button', { name: /custom route generator/i }))
       const locationInput = screen.getByLabelText(/starting location/i)
       await user.type(locationInput, 'London')
       await user.click(screen.getByRole('button', { name: /generate route/i }))
@@ -149,7 +125,6 @@ describe('RecommendationsClient - Save Walk Feature', () => {
       render(<RecommendationsClient />)
 
       // Generate route
-      await user.click(screen.getByRole('button', { name: /custom route generator/i }))
       await user.type(screen.getByLabelText(/starting location/i), 'London')
       await user.click(screen.getByRole('button', { name: /generate route/i }))
 
@@ -172,7 +147,6 @@ describe('RecommendationsClient - Save Walk Feature', () => {
       render(<RecommendationsClient />)
 
       // Generate route
-      await user.click(screen.getByRole('button', { name: /custom route generator/i }))
       await user.type(screen.getByLabelText(/starting location/i), 'London')
       await user.click(screen.getByRole('button', { name: /generate route/i }))
 
@@ -197,7 +171,6 @@ describe('RecommendationsClient - Save Walk Feature', () => {
 
       // Generate route
       await user.click(screen.getByRole('button', { name: /custom route generator/i }))
-      await user.type(screen.getByLabelText(/starting location/i), 'London')
       await user.click(screen.getByRole('button', { name: /generate route/i }))
 
       await waitFor(() => {
@@ -220,7 +193,6 @@ describe('RecommendationsClient - Save Walk Feature', () => {
       render(<RecommendationsClient />)
 
       // Generate route
-      await user.click(screen.getByRole('button', { name: /custom route generator/i }))
       await user.type(screen.getByLabelText(/starting location/i), 'London')
       await user.click(screen.getByRole('button', { name: /generate route/i }))
 
@@ -242,7 +214,6 @@ describe('RecommendationsClient - Save Walk Feature', () => {
       render(<RecommendationsClient />)
 
       // Generate first route
-      await user.click(screen.getByRole('button', { name: /custom route generator/i }))
       await user.type(screen.getByLabelText(/starting location/i), 'London')
       await user.click(screen.getByRole('button', { name: /generate route/i }))
 
@@ -284,7 +255,6 @@ describe('RecommendationsClient - Save Walk Feature', () => {
       render(<RecommendationsClient />)
 
       // Generate route
-      await user.click(screen.getByRole('button', { name: /custom route generator/i }))
       await user.type(screen.getByLabelText(/starting location/i), 'London')
       await user.click(screen.getByRole('button', { name: /generate route/i }))
 
